@@ -1,0 +1,1 @@
+[  {    "relation": [      "delegate_permission/common.handle_all_urls"    ],    "target": {      "namespace": "android_app",      "package_name": "app.signal.flutter",      "sha256_cert_fingerprints": [        "DF:E0:DF:3D:73:E1:5B:8E:07:A8:91:E0:8E:3B:88:5D:40:71:CD:0A:3D:BC:6E:B8:85:D2:B3:74:39:AA:4D:A1"      ]    }  }]
