@@ -1,0 +1,23 @@
+
+   Error 
+
+  Class "Stripe\Stripe" not found
+
+  at app/Http/Controllers/PaymentController.php:26
+     22▕ {
+     23▕     public function __construct()
+     24▕     {
+     25▕         // Configuration Stripe
+  ➜  26▕         Stripe::setApiKey(config('services.stripe.secret'));
+     27▕     }
+     28▕ 
+     29▕     // Méthodes pour les abonnements
+     30▕     public function showMembershipPlans()
+
+  1   [internal]:0
+      App\Http\Controllers\PaymentController::__construct()
+      [2m+12 vendor frames [22m
+
+  14  [internal]:0
+      Illuminate\Foundation\Console\RouteListCommand::{closure:Illuminate\Foundation\Console\RouteListCommand::getRoutes():115}()
+

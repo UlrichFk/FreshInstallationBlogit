@@ -110,7 +110,7 @@
         </ul>
     </div>
     <div class="navbar-search-wrapper search-input-wrapper d-none">
-        <input type="text" class="form-control search-input container-xxl border-0" placeholder="Search..." aria-label="Search..." />
+        <input type="text" class="form-control search-input container-xxl border-0" placeholder="{{ __("lang.admin_search") }}" aria-label="{{ __("lang.admin_search") }}" />
         <i class="ti ti-x ti-sm search-toggler cursor-pointer"></i>
     </div>
 </nav>

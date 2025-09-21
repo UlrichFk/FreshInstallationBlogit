@@ -26,7 +26,7 @@
                             <div class="col-md-12 hide show_user">
                                 <div class="mb-3 display-inline-block width-74-percent">
                                     <label class="form-label" for="title">{{__('lang.admin_user_email')}} <span class="required">*</span></label>
-                                    <select id="email" class="select2 form-select email" placeholder="Select Email" name="email[]" multiple>
+                                    <select id="email" class="select2 form-select email" placeholder="{{ __("lang.admin_select_email") }}" name="email[]" multiple>
                                         <option value="">{{__('lang.admin_select_email')}}</option>
                                         @foreach($emails as $email)
                                             <option value="{{$email->id}}">{{$email->email}}</option>

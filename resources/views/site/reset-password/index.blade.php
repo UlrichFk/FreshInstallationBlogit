@@ -1,59 +1,254 @@
 @extends('site/layout/site-app')
 
 @section('content')
-<div class="main-container">	
-	<main class="site-main">
-		<div class="container-fluid no-left-padding no-right-padding contact-section">		
-		</div>
-		<div class="container-fluid no-left-padding no-right-padding">
-			<div class="container">
-				<div class="contact-info">
-					<div class="block-title">
-						<h3>{{__('lang.website_reset_title')}}</h3>
-					</div>
-				</div>
-				<div class="contact-form">
-					<form class="row" id="reset-password" onsubmit="return validatePassword();" action="{{url('/do-reset-password')}}" method="POST">
-						@csrf
-						<div class="col-md-12 form-group" style="text-align: -webkit-center;">
-							<div class="col-md-4 form-group">
-								<input type="text" class="form-control" placeholder="{{__('lang.website_otp_placeholder')}}" name="otp" id="otp" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))">
-							</div>
-							<div class="col-md-4 form-group">
-								<input type="password" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" name="password" id="password">
-							</div>
-							<div class="col-md-4 form-group">
-								<input type="password" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" name="cpassword" id="cpassword">
-							</div>
-							<div class="col-md-4 form-group">
-								<button type="submit" class="submit">{{__('lang.website_reset_button')}}</button>
-							</div>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-	</main>		
+<style>
+.reset-password-container {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0;
+    background: linear-gradient(135deg, rgba(15, 52, 96, 0.1) 0%, rgba(83, 52, 131, 0.1) 100%);
+}
+
+.reset-password-card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius-lg);
+    padding: 3rem;
+    box-shadow: var(--shadow-medium);
+    border: 1px solid var(--border-color);
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+}
+
+.reset-password-header {
+    margin-bottom: 2rem;
+}
+
+.reset-password-header h3 {
+    color: var(--text-primary);
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.reset-password-header p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.reset-password-form {
+    text-align: left;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-control {
+    background: var(--secondary-color);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: var(--transition);
+    width: 100%;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(15, 52, 96, 0.1);
+    background: var(--secondary-color);
+}
+
+.form-control::placeholder {
+    color: var(--text-muted);
+}
+
+.password-field {
+    position: relative;
+}
+
+.eye-toggle {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: var(--transition);
+}
+
+.eye-toggle:hover {
+    color: var(--text-primary);
+}
+
+.submit-btn {
+    background: var(--gradient-accent);
+    color: var(--text-primary);
+    border: none;
+    border-radius: 30px;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
+
+.back-to-login {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.back-to-login a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.back-to-login a:hover {
+    color: var(--text-primary);
+    transform: translateX(-3px);
+}
+
+.back-to-login a::before {
+    content: '←';
+    font-size: 1.1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .reset-password-container {
+        padding: 1rem;
+    }
+
+    .reset-password-card {
+        padding: 2rem;
+        margin: 1rem;
+    }
+
+    .reset-password-header h3 {
+        font-size: 1.75rem;
+    }
+}
+</style>
+
+<div class="reset-password-container">
+    <div class="reset-password-card">
+        <div class="reset-password-header">
+            <h3>{{__('lang.website_reset_title')}}</h3>
+            <p>Enter your OTP and create a new password to reset your account.</p>
+        </div>
+        
+        <form class="reset-password-form" id="reset-password" onsubmit="return validate{{ __('lang.site_password') }}();" action="{{url('/do-reset-password')}}" method="POST">
+            @csrf
+            <div class="form-group">
+                <input type="text" 
+                       class="form-control" 
+                       placeholder="{{__('lang.website_otp_placeholder')}}" 
+                       name="otp" 
+                       id="otp" 
+                       onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))"
+                       required>
+            </div>
+            
+            <div class="form-group">
+                <div class="password-field">
+                    <input type="password" 
+                           class="form-control" 
+                           placeholder="New {{ __('lang.site_password') }}" 
+                           name="password" 
+                           id="password"
+                           required>
+                    <button type="button" class="eye-toggle" onclick="toggle{{ __('lang.site_password') }}('password')">
+                        <i class="fa fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="password-field">
+                    <input type="password" 
+                           class="form-control" 
+                           placeholder="Confirm {{ __('lang.site_password') }}" 
+                           name="cpassword" 
+                           id="cpassword"
+                           required>
+                    <button type="button" class="eye-toggle" onclick="toggle{{ __('lang.site_password') }}('cpassword')">
+                        <i class="fa fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <button type="submit" class="submit-btn">
+                {{__('lang.website_reset_button')}}
+            </button>
+        </form>
+        
+        <div class="back-to-login">
+            <a href="{{url('/login')}}">{{__('lang.website_login_title')}}</a>
+        </div>
+    </div>
 </div>
+
 <script type="text/javascript">
-function validatePassword() {
-  var password = document.getElementById("password").value;
-  var cpassword = document.getElementById("cpassword").value;
-  var uppercase = /[A-Z]/;
-  var lowercase = /[a-z]/;
-  var specialChars = /[!@#$%^&*()_+=-{};:'<>,./?]/;
+function validate{{ __('lang.site_password') }}() {
+    var password = document.getElementById("password").value;
+    var cpassword = document.getElementById("cpassword").value;
+    var uppercase = /[A-Z]/;
+    var lowercase = /[a-z]/;
+    var specialChars = /[!@#$%^&*()_+=-{};:'<>,./?]/;
 
-  if (password.length < 8 || !uppercase.test(password) || !lowercase.test(password) || !specialChars.test(password)) {
-    toastr.error("Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one special character.");
-    return false;
-  }
+    if (password.length < 8 || !uppercase.test(password) || !lowercase.test(password) || !specialChars.test(password)) {
+        toastr.error("{{ __('lang.site_password') }} must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one special character.");
+        return false;
+    }
 
-  if (password !== cpassword) {
-    toastr.error("Confirm password does not match with password.");
-    return false;
-  }
+    if (password !== cpassword) {
+        toastr.error("Confirm password does not match with password.");
+        return false;
+    }
 
-  return true;
+    return true;
+}
+
+function toggle{{ __('lang.site_password') }}(fieldId) {
+    const field = document.getElementById(fieldId);
+    const toggle = field.nextElementSibling;
+    const icon = toggle.querySelector('i');
+    
+    if (field.type === 'password') {
+        field.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        field.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
 }
 </script>
 @endsection

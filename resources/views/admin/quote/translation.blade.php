@@ -29,7 +29,7 @@
                                 <div class="col-md-8">
                                     <div class="mb-3 display-inline-block width-74-percent">
                                         <label class="form-label" for="quote">{{__('lang.quote')}}</label>
-                                        <textarea class="form-control" id="quote_{{$row->code}}" name="quote[]" placeholder="Enter quote"  value="{{$row->details->quote}}">{{$row->details->quote}}</textarea>
+                                        <textarea class="form-control" id="quote_{{$row->code}}" name="quote[]" placeholder="{{ __("lang.admin_enter_quote") }}"  value="{{$row->details->quote}}">{{$row->details->quote}}</textarea>
                                     </div>
                                     @if(setting('chat_gpt_api_key')!='')
                                         <button type="button" class="btn btn-primary mb-1 mb-sm-0 me-0 me-sm-1" onclick="translateByThirdParty('{{$row->name}}','{{$row->code}}','quote_{{$row->code}}');">{{__('lang.translate')}}</button>

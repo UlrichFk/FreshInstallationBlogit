@@ -138,7 +138,7 @@
             <div class="card-body">
               <div class="app-brand justify-content-center mb-4 mt-2">
                 <a href="{{url('/')}}" class="app-brand-link gap-2">
-                  <span class="app-brand-text demo text-body fw-bold ms-1">Incite</span>
+                  <span class="app-brand-text demo text-body fw-bold ms-1">{{__('messages.app_name')}}</span>
                 </a>
               </div>
               <h4 class="mb-1 pt-2">{{__('lang.admin_reset_password')}}</h4>

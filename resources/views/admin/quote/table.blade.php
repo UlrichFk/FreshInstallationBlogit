@@ -33,14 +33,14 @@
                                 <i class="ti ti-pencil me-1 margin-top-negative-4"></i> Edit </a>
                                 <a class="dropdown-item" href="{{url('/admin/quote/translation/'.$row->id)}}">
                                 <i class="ti ti-language me-1 margin-top-negative-4"></i> Translation </a>
-                                <form action="{{ url('admin/delete-quote', $row->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete?')"> @csrf @method('DELETE') <button type="submit" class="dropdown-item" data-toggle="tooltip" data-placement="bottom" title="Delete">
+                                <form action="{{ url('admin/delete-quote', $row->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete?')"> @csrf @method('DELETE') <button type="submit" class="dropdown-item" data-toggle="tooltip" data-placement="bottom" title="{{ __("lang.admin_delete") }}">
                                     <i class="ti ti-trash me-1 margin-top-negative-4"></i>Delete </button>
                                 </form>
                             </div>
                         </div>
                         <div class="offcanvas offcanvas-end" id="edit-new-record_{{$row->id}}">
                             <div class="offcanvas-header border-bottom">
-                                <h5 class="offcanvas-title" id="exampleModalLabel">Edit Live News</h5>
+                                <h5 class="offcanvas-title" id="exampleModalLabel">{{ __("lang.admin_edit_live_news") }}</h5>
                                 <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                             </div>
                             <div class="offcanvas-body flex-grow-1">
@@ -49,7 +49,7 @@
                                         <div class="mb-1">
                                             <input type="hidden" name="id" value="{{$row->id}}">
                                             <label class="form-label" for="quote">Quote <span class="required">*</span></label>
-                                            <textarea class="form-control" id="quote" name="quote" placeholder="Enter quote"  value="{{$row->quote}}">{{$row->quote}}</textarea>
+                                            <textarea class="form-control" id="quote" name="quote" placeholder="{{ __("lang.admin_enter_quote") }}"  value="{{$row->quote}}">{{$row->quote}}</textarea>
                                         </div>
                                     </div>
                                     <div class="col-sm-12">

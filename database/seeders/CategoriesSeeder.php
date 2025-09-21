@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Category;
-use App\Models\BlogCategory;
 use App\Models\CategoryTranslation;
 
 class CategoriesSeeder extends Seeder
@@ -13,15 +12,15 @@ class CategoriesSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-       public function run()
+      public function run()
     {
     $categoryArr = [
         array(
             'id' => '1',
             'parent_id'=>'0',
-            'name' => 'Demo Category 1', 
-            'slug' => \Helpers::createSlug('Demo Category 1','category',0,false),
-            'color'=> '#000000',
+            'name' => 'Technology', 
+            'slug' => \Helpers::createSlug('Technology','category',0,false),
+            'color'=> '#2563eb',
             'order'=> '1',
             'status'=> '1',
             'is_featured'=> '1'
@@ -29,46 +28,67 @@ class CategoriesSeeder extends Seeder
         array(
             'id' => '2',
             'parent_id'=>'0',
-            'name' => 'Demo Category 2', 
-            'slug' => \Helpers::createSlug('Demo Category 2','category',0,false),
-            'color'=> '#000000',
-            'order'=> '1',
+            'name' => 'Health', 
+            'slug' => \Helpers::createSlug('Health','category',0,false),
+            'color'=> '#16a34a',
+            'order'=> '2',
             'status'=> '1',
             'is_featured'=> '1'
         ),
         array(
             'id' => '3',
             'parent_id'=>'0',
-            'name' => 'Demo Category 3', 
-            'slug' => \Helpers::createSlug('Demo Category 3','category',0,false),
-            'color'=> '#000000',
-            'order'=> '1',
+            'name' => 'Business', 
+            'slug' => \Helpers::createSlug('Business','category',0,false),
+            'color'=> '#f59e0b',
+            'order'=> '3',
             'status'=> '1',
             'is_featured'=> '1'
-        )
+        ),
+        // Nouvelles catégories
+        array(
+            'id' => '4',
+            'parent_id'=>'0',
+            'name' => 'Science', 
+            'slug' => \Helpers::createSlug('Science','category',0,false),
+            'color'=> '#7c3aed',
+            'order'=> '4',
+            'status'=> '1',
+            'is_featured'=> '1'
+        ),
+        array(
+            'id' => '5',
+            'parent_id'=>'0',
+            'name' => 'Travel', 
+            'slug' => \Helpers::createSlug('Travel','category',0,false),
+            'color'=> '#0ea5e9',
+            'order'=> '5',
+            'status'=> '1',
+            'is_featured'=> '1'
+        ),
+        array(
+            'id' => '6',
+            'parent_id'=>'0',
+            'name' => 'Food', 
+            'slug' => \Helpers::createSlug('Food','category',0,false),
+            'color'=> '#ef4444',
+            'order'=> '6',
+            'status'=> '1',
+            'is_featured'=> '1'
+        ),
     ];
-    $i = 0;
+    
     foreach ($categoryArr as $row) {
-        // Check if the category with the given ID exists
         $check = Category::find($row['id']);
         if (!$check) {
-            // If the category doesn't exist, insert data into the database
             $id = Category::insertGetId($row);   
-            $i++;
             $blogTransArr = array(
-                'category_id'=> $row['id'],
+                'category_id'=> $id,
                 'language_code'=>'en',
                 'name' => $row['name'], 
                 'created_at'=> now()
             );
             CategoryTranslation::insertGetId($blogTransArr);
-            $blogCatArr = array(
-                'category_id'=> $row['id'],
-                'blog_id' => $i, 
-                'type' => 'category', 
-                'created_at'=> now()
-            );
-            BlogCategory::insertGetId($blogCatArr);
         }
     }
     }

@@ -22,6 +22,7 @@ class Blog extends Model
     protected $casts = [
         'is_voting_enable' => 'integer',
         'is_featured' => 'integer',
+        'is_premium' => 'boolean',
     ];
 
     public function images(){
@@ -42,6 +43,70 @@ class Blog extends Model
     public function translations()
     {
         return $this->hasMany(BlogTranslation::class, 'blog_id');
+    }
+
+    public function requiredPlan()
+    {
+        return $this->belongsTo(MembershipPlan::class, 'required_plan_id');
+    }
+
+    public function isPremiumContent()
+    {
+        return $this->is_premium || $this->required_plan_id !== null;
+    }
+
+    public function canUserAccess($user = null)
+    {
+        // Si ce n'est pas du contenu premium, accès libre
+        if (!$this->isPremiumContent()) {
+            return true;
+        }
+
+        // Si pas d'utilisateur connecté, pas d'accès
+        if (!$user) {
+            $user = auth()->user();
+        }
+
+        if (!$user) {
+            return false;
+        }
+
+        // Vérifier si l'utilisateur a un abonnement actif
+        if (!$user->hasActiveSubscription()) {
+            return false;
+        }
+
+        // Si un plan spécifique est requis, vérifier que l'utilisateur y a accès
+        if ($this->required_plan_id) {
+            $userSubscription = $user->activeSubscription();
+            if ($userSubscription && $userSubscription->membership_plan_id == $this->required_plan_id) {
+                return true;
+            }
+            return false;
+        }
+
+        // Si pas de plan spécifique requis, l'abonnement actif suffit
+        return true;
+    }
+
+    public function getContentForUser($user = null)
+    {
+        if ($this->canUserAccess($user)) {
+            return $this->description;
+        }
+
+        // Si l'utilisateur n'a pas accès, retourner l'aperçu premium
+        if ($this->premium_content) {
+            return $this->premium_content;
+        }
+
+        // Si pas d'aperçu premium, retourner un aperçu tronqué du contenu
+        $content = $this->description;
+        if (strlen($content) > 300) {
+            $content = substr($content, 0, 300) . '...';
+        }
+        
+        return $content . "\n\n[Contenu Premium - Abonnez-vous pour continuer la lecture]";
     }
 
     /**
@@ -277,6 +342,19 @@ class Blog extends Model
                 if(isset($data['is_voting_enable']) && $data['is_voting_enable']=='on'){
                     $data['is_voting_enable'] = 1;
                 }    
+                if(isset($data['is_premium']) && $data['is_premium']=='on'){
+                    $data['is_premium'] = 1;
+                }else{
+                    $data['is_premium'] = 0;
+                }
+                if(isset($data['required_plan_id']) && $data['required_plan_id']!=''){
+                    $data['required_plan_id'] = $data['required_plan_id'];
+                }else{
+                    $data['required_plan_id'] = null;
+                }
+                if(isset($data['created_at']) && $data['created_at']!=''){
+                    $data['created_at'] = date("Y-m-d H:i:s",strtotime($data['created_at']));
+                }
                 if(isset($data['tags']) && $data['tags']!=''){
                     $explode = explode(",",$data['tags']);
                     for($i=0;$i<count($explode);$i++){                                               
@@ -531,9 +609,16 @@ class Blog extends Model
                 }else{
                     $data['is_voting_enable'] = 0;
                 } 
-                if(isset($data['created_at']) && $data['created_at']!=''){
-                    $data['created_at'] = date("Y-m-d H:i:s",strtotime($data['created_at']));
-                } 
+                if(isset($data['is_premium']) && $data['is_premium']=='on'){
+                    $data['is_premium'] = 1;
+                }else{
+                    $data['is_premium'] = 0;
+                }
+                if(isset($data['required_plan_id']) && $data['required_plan_id']!=''){
+                    $data['required_plan_id'] = $data['required_plan_id'];
+                }else{
+                    $data['required_plan_id'] = null;
+                }
                 if(isset($data['tags']) && $data['tags']!=''){
                     $explode = explode(",",$data['tags']);
                     for($i=0;$i<count($explode);$i++){                                               

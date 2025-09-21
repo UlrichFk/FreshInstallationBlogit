@@ -209,13 +209,13 @@
     $(document).ready(function() {
       
       $('.category_id').select2({
-        placeholder: 'Select category'
+        placeholder: '{{ __('lang.admin_select_category') }}'
       });
       $('.sub_category_id').select2({
-        placeholder: 'Select subcategory'
+        placeholder: '{{ __('lang.admin_select_subcategory') }}'
       });
       $('.email').select2({
-        placeholder: 'Select email'
+        placeholder: '{{ __('lang.admin_select_email') }}'
       });
       $("#ad_table").sortable({
             items: "tr",

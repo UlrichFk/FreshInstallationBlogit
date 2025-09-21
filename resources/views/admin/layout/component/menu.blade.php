@@ -195,17 +195,50 @@
             </ul>
         </li>
         @endcanany
+        @canany(['membership-plans', 'user-subscriptions'])
+        <li class="menu-item {{(Request::is('admin/membership-plans*') || Request::is('admin/user-subscriptions*')) ? 'active open' : ''}} ">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons ti ti-crown"></i>
+                <div data-i18n="Membership">Membership</div>
+                <div class="badge bg-label-primary rounded-pill ms-auto">2</div>
+            </a>
+            <ul class="menu-sub">
+                @can('membership-plans')
+                <li class="menu-item {{Request::is('admin/membership-plans*') ? 'active' : ''}}">
+                    <a href="{{url('admin/membership-plans')}}" class="menu-link">
+                    <div data-i18n="Membership Plans">Membership Plans</div>
+                    </a>
+                </li>
+                @endcan
+                @can('user-subscriptions')
+                <li class="menu-item {{Request::is('admin/user-subscriptions*') ? 'active' : ''}}">
+                    <a href="{{url('admin/user-subscriptions')}}" class="menu-link">
+                    <div data-i18n="User Subscriptions">User Subscriptions</div>
+                    </a>
+                </li>
+                @endcan
+            </ul>
+        </li>
+        @endcanany
+        @can('transactions')
+        <li class="menu-item {{Request::is('admin/transactions*') ? 'active' : ''}}">
+            <a href="{{url('admin/transactions')}}" class="menu-link">
+            <i class="menu-icon tf-icons ti ti-receipt"></i>
+            <div data-i18n="Transactions">Transactions</div>
+            </a>
+        </li>
+        @endcan
         @canany(['settings', 'social-media'])
-        <li class="menu-item {{(Request::is('admin/settings*') || Request::is('admin/social-media*')) ? 'active open' : ''}} ">
+        <li class="menu-item {{(Request::is('admin/settings*') || Request::is('admin/social-media*') || Request::is('admin/watermark*')) ? 'active open' : ''}} ">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons ti ti-settings"></i>
                 <div data-i18n="{{__('lang.admin_settings')}}">{{__('lang.admin_settings')}}</div>
-                <div class="badge bg-label-primary rounded-pill ms-auto">3</div>
+                <div class="badge bg-label-primary rounded-pill ms-auto">4</div>
             </a>
             <ul class="menu-sub">
                 @can('settings')
-                <li class="menu-item {{Request::is('admin/settings/all-setting*') ? 'active' : ''}}">
-                    <a href="{{url('admin/settings/all-setting')}}" class="menu-link">
+                <li class="menu-item {{Request::is('admin/settings*') ? 'active' : ''}}">
+                    <a href="{{url('admin/settings')}}" class="menu-link">
                     <div data-i18n="{{__('lang.admin_all_settings')}}">{{__('lang.admin_all_settings')}}</div>
                     </a>
                 </li>

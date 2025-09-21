@@ -20,11 +20,11 @@
                     <td>{{$row->title}}</td>
                     <td>
                         @if($row->type == 'by_category')
-                        Category
+                        {{ __("lang.admin_category") }}
                         @elseif($row->type == 'by_visibility')
-                        Visibility
+                        {{ __("lang.admin_visibility") }}
                         @else
-                        By All Blogs
+                        {{ __("lang.admin_by_all_blogs") }}
                         @endif
                     </td>
                     <td>
@@ -71,7 +71,7 @@
                             <div class="dropdown-menu">
                                 <a class="dropdown-item" href="{{url('/admin/edit-app-home-page/'.$row->id)}}">
                                 <i class="ti ti-pencil me-1 margin-top-negative-4"></i> {{__('lang.admin_edit')}} </a>
-                                <form id="deleteForm_{{$row->id}}" onsubmit="return deleteConfirm('deleteForm_{{$row->id}}');" action="{{ url('admin/delete-app-home-page', $row->id) }}" method="POST"> @csrf @method('DELETE') <button type="submit" class="dropdown-item" data-toggle="tooltip" data-placement="bottom" title="Delete">
+                                <form id="deleteForm_{{$row->id}}" onsubmit="return deleteConfirm('deleteForm_{{$row->id}}');" action="{{ url('admin/delete-app-home-page', $row->id) }}" method="POST"> @csrf @method('DELETE') <button type="submit" class="dropdown-item" data-toggle="tooltip" data-placement="bottom" title="{{ __("lang.admin_delete") }}">
                                     <i class="ti ti-trash me-1 margin-top-negative-4"></i>{{__('lang.admin_delete')}} </button>
                                 </form>
                             </div>

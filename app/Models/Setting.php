@@ -260,6 +260,46 @@ class Setting extends Model
                     $data['is_ios_app_force_update'] = 0;
                 }
             }
+            if($page_name=='watermark-setting'){
+                // Gestion des paramètres de watermark
+                if (isset($data['is_enabled'])) {
+                    $data['is_enabled'] = $data['is_enabled'] == 'on' ? 1 : 0;
+                } else {
+                    $data['is_enabled'] = 0;
+                }
+                
+                if (isset($data['apply_to_original'])) {
+                    $data['apply_to_original'] = $data['apply_to_original'] == 'on' ? 1 : 0;
+                } else {
+                    $data['apply_to_original'] = 0;
+                }
+                
+                if (isset($data['apply_to_768x428'])) {
+                    $data['apply_to_768x428'] = $data['apply_to_768x428'] == 'on' ? 1 : 0;
+                } else {
+                    $data['apply_to_768x428'] = 0;
+                }
+                
+                if (isset($data['apply_to_327x250'])) {
+                    $data['apply_to_327x250'] = $data['apply_to_327x250'] == 'on' ? 1 : 0;
+                } else {
+                    $data['apply_to_327x250'] = 0;
+                }
+                
+                if (isset($data['apply_to_80x45'])) {
+                    $data['apply_to_80x45'] = $data['apply_to_80x45'] == 'on' ? 1 : 0;
+                } else {
+                    $data['apply_to_80x45'] = 0;
+                }
+                
+                // Gestion de l'upload d'image de watermark
+                if(isset($data['watermark_image']) && $data['watermark_image']!=''){
+                    $uploadImage = \Helpers::uploadFiles($data['watermark_image'],'watermark/');
+                    if($uploadImage['status']==true){
+                        $data['image_path'] = $uploadImage['file_name'];
+                    }
+                }
+            }
 
             if(isset($data['site_logo']) && $data['site_logo']!=''){
                 $uploadImage = \Helpers::uploadFiles($data['site_logo'],'setting/');

@@ -52,7 +52,7 @@
         <span class="jl_close_wapper search_form_menu_personal_click"><span class="jl_close_1"></span><span class="jl_close_2"></span></span>
     </div>
     <form method="get" class="searchform_theme" action="{{url('search-blog')}}">
-        <input type="text" placeholder="Search..." name="keyword" class="search_btn" />
+        <input type="text" placeholder="{{ __("lang.site_search") }}" name="keyword" class="search_btn" />
         <button type="submit" class="button"><i class="fa fa-search fa-2x"></i></button>
     </form>
 </div>

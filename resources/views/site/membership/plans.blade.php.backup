@@ -1,0 +1,603 @@
+@extends('site.layout.site-app')
+
+@section('title', 'Plans d\'Abonnement Premium')
+
+@section('content')
+<div class="membership-plans-page">
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <div class="hero-content">
+                        <h1 class="hero-title">
+                            Débloquez le <span class="highlight">{{ __("lang.site_premium_content") }}</span>
+                        </h1>
+                        <p class="hero-subtitle">
+                            {{ __("lang.site_access_exclusive_content_premium") }}
+                        </p>
+                        <div class="hero-features">
+                            <div class="feature-item">
+                                <i class="ti ti-check-circle"></i>
+                                <span>Contenu exclusif</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="ti ti-check-circle"></i>
+                                <span>Sans publicité</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="ti ti-check-circle"></i>
+                                <span>Accès prioritaire</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Plans Section -->
+    <section class="plans-section">
+        <div class="container">
+            @if(isset($demoPlans))
+                <div class="alert alert-info text-center mb-5">
+                    <i class="ti ti-info-circle me-2"></i>
+                    <strong>Mode Démo :</strong> Affichage des plans de démonstration
+                </div>
+            @endif
+
+            <div class="row justify-content-center g-4">
+                @foreach(isset($plans) ? $plans : $demoPlans as $plan)
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="plan-card @if($plan->is_featured) featured @endif">
+                        @if($plan->is_featured)
+                            <div class="featured-badge">
+                                <i class="ti ti-star"></i>
+                                <span>Populaire</span>
+                            </div>
+                        @endif
+                        
+                        <div class="plan-header">
+                            <div class="plan-icon">
+                                @if($plan->is_featured)
+                                    <i class="ti ti-crown"></i>
+                                @else
+                                    <i class="ti ti-package"></i>
+                                @endif
+                            </div>
+                            <h3 class="plan-name">{{ $plan->name }}</h3>
+                            <p class="plan-description">{{ $plan->description ?? 'Accès premium complet' }}</p>
+                        </div>
+
+                        <div class="plan-pricing">
+                            <div class="price">
+                                <span class="currency">€</span>
+                                <span class="amount">{{ number_format($plan->price, 2) }}</span>
+                                <span class="period">/{{ ucfirst($plan->billing_cycle) }}</span>
+                            </div>
+                            @if($plan->billing_cycle == 'monthly')
+                                <div class="savings">Économisez avec l'abonnement annuel</div>
+                            @endif
+                        </div>
+
+                        @if($plan->features && is_array($plan->features))
+                        <div class="plan-features">
+                            <ul>
+                                @foreach($plan->features as $feature)
+                                    <li>
+                                        <i class="ti ti-check"></i>
+                                        <span>{{ $feature }}</span>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        @endif
+
+                        <div class="plan-actions">
+                            @auth
+                                @if(auth()->user()->hasActiveSubscription())
+                                    @if(auth()->user()->activeSubscription()->membership_plan_id == $plan->id)
+                                        <button class="btn btn-current-plan" disabled>
+                                            <i class="ti ti-check me-2"></i>
+                                            Plan Actuel
+                                        </button>
+                                    @else
+                                        <a href="{{ url('membership/subscribe/'.$plan->id) }}" class="btn btn-primary btn-full">
+                                            <i class="ti ti-arrow-right me-2"></i>
+                                            Changer de Plan
+                                        </a>
+                                    @endif
+                                @else
+                                    <a href="{{ url('membership/subscribe/'.$plan->id) }}" class="btn btn-primary btn-full">
+                                        <i class="ti ti-rocket me-2"></i>
+                                        S'abonner Maintenant
+                                    </a>
+                                @endif
+                            @else
+                                <a href="{{ url('login') }}" class="btn btn-primary btn-full">
+                                    <i class="ti ti-login me-2"></i>
+                                    Se Connecter pour S'abonner
+                                </a>
+                            @endauth
+                        </div>
+
+                        <div class="plan-footer">
+                            <div class="security-badge">
+                                <i class="ti ti-shield-check"></i>
+                                <span>Paiement sécurisé</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+
+            @if(!auth()->check())
+            <div class="row mt-5">
+                <div class="col-lg-8 mx-auto">
+                    <div class="cta-card">
+                        <div class="cta-content">
+                            <h4>Nouveau sur la plateforme ?</h4>
+                            <p>Créez un compte pour débloquer des histoires premium et fonctionnalités exclusives.</p>
+                        </div>
+                        <div class="cta-actions">
+                            <a href="{{ url('signup') }}" class="btn btn-outline-primary">
+                                <i class="ti ti-user-plus me-2"></i>
+                                Créer un Compte
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h2 class="section-title text-center">Questions Fréquentes</h2>
+                    <div class="faq-list">
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h5>Comment fonctionne l'abonnement ?</h5>
+                                <i class="ti ti-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>{{ __("lang.site_choose_plan_description") }}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h5>Puis-je annuler mon abonnement ?</h5>
+                                <i class="ti ti-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Oui, vous pouvez annuler votre abonnement à tout moment depuis votre profil. L'accès premium reste actif jusqu'à la fin de la période facturée.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <div class="faq-question">
+                                <h5>Quels moyens de paiement acceptez-vous ?</h5>
+                                <i class="ti ti-chevron-down"></i>
+                            </div>
+                            <div class="faq-answer">
+                                <p>{{ __("lang.site_payment_methods_description") }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+.membership-plans-page {
+    background: var(--primary-color);
+    min-height: 100vh;
+}
+
+/* Hero Section */
+.hero-section {
+    padding: 120px 0 80px;
+    background: var(--gradient-primary);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="heroPattern" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23heroPattern)"/></svg>');
+    opacity: 0.3;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
+}
+
+.hero-title .highlight {
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.hero-features {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.feature-item i {
+    color: var(--accent-color);
+    font-size: 1.2rem;
+}
+
+/* Plans Section */
+.plans-section {
+    padding: 80px 0;
+    background: var(--secondary-color);
+}
+
+.plan-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 2rem;
+    position: relative;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.plan-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--accent-color);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+.plan-card.featured {
+    border-color: var(--accent-color);
+    background: linear-gradient(135deg, var(--card-bg) 0%, rgba(15, 52, 96, 0.1) 100%);
+}
+
+.featured-badge {
+    position: absolute;
+    top: -15px;
+    right: 20px;
+    background: var(--gradient-accent);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.plan-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.plan-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--gradient-accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+}
+
+.plan-icon i {
+    font-size: 2rem;
+    color: white;
+}
+
+.plan-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.plan-description {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.plan-pricing {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.price {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.price .currency {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.price .amount {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.price .period {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.savings {
+    font-size: 0.875rem;
+    color: var(--accent-color);
+    font-weight: 500;
+}
+
+.plan-features {
+    margin-bottom: 2rem;
+    flex-grow: 1;
+}
+
+.plan-features ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.plan-features li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    color: var(--text-secondary);
+}
+
+.plan-features li i {
+    color: var(--accent-color);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.plan-actions {
+    margin-bottom: 1.5rem;
+}
+
+.btn-full {
+    width: 100%;
+    padding: 1rem;
+    font-weight: 600;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: var(--gradient-accent);
+    border: none;
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(15, 52, 96, 0.3);
+}
+
+.btn-current-plan {
+    background: var(--secondary-color);
+    color: var(--text-secondary);
+    border: 2px solid var(--border-color);
+    cursor: not-allowed;
+}
+
+.btn-outline-primary {
+    border: 2px solid var(--accent-color);
+    color: var(--accent-color);
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background: var(--accent-color);
+    color: white;
+}
+
+.plan-footer {
+    text-align: center;
+}
+
+.security-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.security-badge i {
+    color: var(--accent-color);
+}
+
+/* CTA Card */
+.cta-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    border: 2px solid var(--border-color);
+}
+
+.cta-content h4 {
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.cta-content p {
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* FAQ Section */
+.faq-section {
+    padding: 80px 0;
+    background: var(--primary-color);
+}
+
+.section-title {
+    color: var(--text-primary);
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 3rem;
+}
+
+.faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.faq-item {
+    background: var(--card-bg);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.faq-question {
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.faq-question:hover {
+    background: rgba(15, 52, 96, 0.1);
+}
+
+.faq-question h5 {
+    color: var(--text-primary);
+    margin: 0;
+    font-weight: 600;
+}
+
+.faq-question i {
+    color: var(--accent-color);
+    transition: transform 0.3s ease;
+}
+
+.faq-item.active .faq-question i {
+    transform: rotate(180deg);
+}
+
+.faq-answer {
+    padding: 0 1.5rem 1.5rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    display: none;
+}
+
+.faq-item.active .faq-answer {
+    display: block;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-features {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .cta-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .plan-card {
+        padding: 1.5rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // FAQ Toggle
+    const faqItems = document.querySelectorAll('.faq-item');
+    
+    faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        
+        question.addEventListener('click', () => {
+            const isActive = item.classList.contains('active');
+            
+            // Close all other items
+            faqItems.forEach(otherItem => {
+                otherItem.classList.remove('active');
+            });
+            
+            // Toggle current item
+            if (!isActive) {
+                item.classList.add('active');
+            }
+        });
+    });
+});
+</script>
+@endsection 

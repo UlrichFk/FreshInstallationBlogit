@@ -144,7 +144,7 @@
                                     @foreach($shares as $share) 
                                         <tr>
                                             <td>
-                                            @if(isset($share->user) && $share->user!=''){{$share->user->name}}@else Guest @endif
+                                            @if(isset($share->user) && $share->user!=''){{$share->user->name}}@else {{ __("lang.admin_guest") }} @endif
                                             </td>
                                             <td>
                                                 {{date("d-m-Y",strtotime($share->created_at))}}</br>
@@ -180,7 +180,7 @@
                                     @foreach($likes as $like) 
                                         <tr>
                                             <td>
-                                            @if(isset($like->user) && $like->user!=''){{$like->user->name}}@else Guest @endif
+                                            @if(isset($like->user) && $like->user!=''){{$like->user->name}}@else {{ __("lang.admin_guest") }} @endif
                                             </td>
                                             <td>
                                                 {{date("d-m-Y",strtotime($like->created_at))}}</br>
@@ -220,7 +220,7 @@
                                     @foreach($comments as $comment) 
                                         <tr>
                                             <td>
-                                            @if(isset($comment->user) && $comment->user!=''){{$comment->user->name}}@else Guest @endif
+                                            @if(isset($comment->user) && $comment->user!=''){{$comment->user->name}}@else {{ __("lang.admin_guest") }} @endif
                                             </td>
                                             <td>
                                             @if(isset($comment->comment) && $comment->comment!=''){{$comment->comment}}@else -- @endif

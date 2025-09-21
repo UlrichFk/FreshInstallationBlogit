@@ -124,7 +124,7 @@
                             <input class="form-control" type="file" name="media" id="change-video" accept="video/*" onclick="showVideoPreview('change-video', 'video-preview', 1080, 1920);">
                             <video id="video-preview" controls="false" style="width: 30%;margin-top: 20px;" class="video-container hide">
                                 <source class="video-preview" src="" type="video/mp4" controls="false">
-                                <source class="video-preview" src="" type="video/webm">Your browser does not support the video tag.
+                                <source class="video-preview" src="" type="video/webm">{{ __("lang.admin_video_not_supported") }}.
                             </video>
                         </div>
                         <div class="col-md-6 hide showVideoUrl" style="margin-top: 15px;">

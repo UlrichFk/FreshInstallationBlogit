@@ -35,7 +35,7 @@
             @if(isset($categoryList[$j]->sub_category) && count($categoryList[$j]->sub_category))
             <ul class="sub-menu"> 
                 <li class="menu-item">
-                    <a href="{{url('/category/'.$categoryList[$j]->slug)}}">All {{$categoryList[$j]->name}}<span class="border-menu"></span></a>
+                    <a href="{{url('/category/'.$categoryList[$j]->slug)}}">{{__('messages.all')}} {{$categoryList[$j]->name}}<span class="border-menu"></span></a>
                 </li> 
                 @foreach($categoryList[$j]->sub_category as $subcategory)
                 <li class="menu-item">
@@ -50,7 +50,7 @@
             <a href="javascript:;">{{$categoryList[$j]->name}}<span class="border-menu"></span></a>
             <ul class="sub-menu"> 
                 <li class="menu-item">
-                    <a href="{{url('/category/'.$categoryList[$j]->slug)}}">All {{$categoryList[$j]->name}}<span class="border-menu"></span></a>
+                    <a href="{{url('/category/'.$categoryList[$j]->slug)}}">{{__('messages.all')}} {{$categoryList[$j]->name}}<span class="border-menu"></span></a>
                 </li> 
             </ul>
         </li>

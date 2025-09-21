@@ -11,6 +11,8 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\UpdateApplication::class,
         \App\Console\Commands\PublishScheduledPosts::class,
         \App\Console\Commands\RssAutoPublishPost::class,
+        \App\Console\Commands\CheckExpiredSubscriptions::class,
+        \App\Console\Commands\ApplyWatermarkToExistingImages::class,
     ];
     /**
      * Define the application's command schedule.
@@ -18,6 +20,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('rss:auto-publish')->everyMinute();
+        $schedule->command('subscriptions:check-expired')->daily();
     }
 
     /**

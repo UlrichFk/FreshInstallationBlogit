@@ -26,6 +26,9 @@
                 <a href="{{url('/saved-stories')}}">{{__('lang.website_saved_stories')}}<span class="border-menu"></span></a>
             </li>
             <li class="menu-item">
+                <a href="{{route('transactions.index')}}">{{__('lang.website_my_transactions')}}<span class="border-menu"></span></a>
+            </li>
+            <li class="menu-item">
                 <a href="{{url('/logout')}}">{{__('lang.website_logout')}}<span class="border-menu"></span></a>
             </li>
             @else

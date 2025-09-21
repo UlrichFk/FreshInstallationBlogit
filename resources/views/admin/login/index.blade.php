@@ -104,7 +104,7 @@
                 </div>
                 <div class="d-flex justify-content-between">
                   <a href="{{url('admin-forget-password')}}">
-                    <small>Forgot Password?</small>
+                    <small>{{__('lang.forgot_password')}}</small>
                   </a>
                 </div>
               </div>

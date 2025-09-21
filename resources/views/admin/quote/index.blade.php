@@ -18,11 +18,11 @@
         <div class="row">
           <h5 class="card-title display-inline-block">Filters</h5>
           <div class="form-group col-sm-3 display-inline-block" >
-              <input type="text" class="form-control" placeholder="Search quotes" name="quote" value="@if(isset($_GET['quote']) && $_GET['quote']!=''){{$_GET['quote']}}@endif">
+              <input type="text" class="form-control" placeholder="{{ __("lang.admin_search_quotes") }}" name="quote" value="@if(isset($_GET['quote']) && $_GET['quote']!=''){{$_GET['quote']}}@endif">
           </div>
           <div class="col-sm-3 display-inline-block">
               <select class="form-control" name="status">
-                <option value="">Select Status</option> 
+                <option value="">{{ __("lang.admin_select_status") }}</option> 
                 <option value="0" @if(isset($_GET['status']) && $_GET['status']!='') @if($_GET['status']==0) selected @endif @endif>Inactive</option>
                 <option value="1" @if(isset($_GET['status']) && $_GET['status']!='') @if($_GET['status']==1) selected @endif @endif>Active</option>
               </select>
@@ -57,7 +57,7 @@
         <div class="col-sm-12">
           <div class="mb-1">
             <label class="form-label" for="quote">Quote <span class="required">*</span></label>
-            <textarea class="form-control" id="quote" name="quote" placeholder="Enter quote"></textarea>
+            <textarea class="form-control" id="quote" name="quote" placeholder="{{ __("lang.admin_enter_quote") }}"></textarea>
           </div>
         </div>
         <div class="col-sm-12">

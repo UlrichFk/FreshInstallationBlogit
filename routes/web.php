@@ -2,6 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\MembershipPlanController;
+use App\Http\Controllers\Admin\UserSubscriptionController;
+use App\Http\Controllers\MembershipController;
+use App\Http\Controllers\DonationController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\UserTransactionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -156,14 +162,34 @@ Route::middleware('admin-language:web')->group(function () {
 
             /************************* Settings Routing Starts Here **************************/
 
-            Route::get('/settings/{type}', 'App\Http\Controllers\Admin\SettingController@index');
+            Route::get('/settings', 'App\Http\Controllers\Admin\SettingController@index')->name('admin.settings');
+            Route::get('/settings/{type}', 'App\Http\Controllers\Admin\SettingController@index')->name('admin.settings.type');
             Route::post('/update-setting', 'App\Http\Controllers\Admin\SettingController@update');
-            Route::get('/setlang', 'App\Http\Controllers\Admin\SettingController@setLanguage');
+            Route::get('/admin/setlang', 'App\Http\Controllers\Admin\SettingController@setLanguage');
             
             Route::post('/test-s3-connection', 'App\Http\Controllers\Admin\SettingController@testS3Connection');
             Route::post('/test-local-connection', 'App\Http\Controllers\Admin\SettingController@testLocalConnection');
+            Route::post('/test-stripe-connection', 'App\Http\Controllers\Admin\SettingController@testStripeConnection');
+            Route::post('/test-paypal-connection', 'App\Http\Controllers\Admin\SettingController@testPayPalConnection');
 
-            /************************* Settings Routing Starts Here **************************/
+            /************************* Settings Routing Ends Here **************************/
+
+            /************************* Payment Settings Routing Starts Here **************************/
+
+            Route::get('/payment-settings', function() {
+                return redirect()->route('admin.settings', ['type' => 'payment-setting']);
+            })->name('admin.payment-gateways.index');
+
+            /************************* Payment Settings Routing Ends Here **************************/
+
+            /************************* Watermark Settings Routing Starts Here **************************/
+
+            Route::get('/watermark', 'App\Http\Controllers\Admin\WatermarkController@index');
+            Route::post('/watermark/update', 'App\Http\Controllers\Admin\WatermarkController@update');
+            Route::post('/watermark/test', 'App\Http\Controllers\Admin\WatermarkController@testWatermark');
+            // Route watermark-setting maintenant gérée par SettingController avec type parameter
+
+            /************************* Watermark Settings Routing Ends Here **************************/
 
             /************************* Social Media Settings Routing Starts Here **************************/
 
@@ -178,13 +204,14 @@ Route::middleware('admin-language:web')->group(function () {
 
             /************************* User Settings Routing Starts Here **************************/
 
-            Route::get('/user', 'App\Http\Controllers\Admin\UserController@index');
-            Route::post('/user', 'App\Http\Controllers\Admin\UserController@index');
+            Route::get('/user', 'App\Http\Controllers\Admin\UserController@index')->name('admin.users.index');
+            Route::post('/user', 'App\Http\Controllers\Admin\UserController@index')->name('admin.users.search');
+            Route::get('/user/{id}', 'App\Http\Controllers\Admin\UserController@show')->name('admin.users.show');
             // Route::post('/add-social-media', 'App\Http\Controllers\Admin\UserController@store');
             // Route::post('/update-social-media', 'App\Http\Controllers\Admin\UserController@update');
-            Route::delete('/delete-user/{id}', 'App\Http\Controllers\Admin\UserController@destroy');
-            Route::get('/update-user-status/{id}/{value}', 'App\Http\Controllers\Admin\UserController@updateColumn');
-            Route::get('/personlization/{id}', 'App\Http\Controllers\Admin\UserController@personalization');
+            Route::delete('/delete-user/{id}', 'App\Http\Controllers\Admin\UserController@destroy')->name('admin.users.destroy');
+            Route::get('/update-user-status/{id}/{value}', 'App\Http\Controllers\Admin\UserController@updateColumn')->name('admin.users.status');
+            Route::get('/personlization/{id}', 'App\Http\Controllers\Admin\UserController@personalization')->name('admin.users.personalization');
 
 
             /************************* User Settings Starts Here **************************/
@@ -270,7 +297,48 @@ Route::middleware('admin-language:web')->group(function () {
             Route::get('/ad-analytics/{id}', 'App\Http\Controllers\Admin\AdController@analytics');
             Route::delete('/delete-selected-ad', 'App\Http\Controllers\Admin\AdController@deleteSelected')->name('ad.deleteSelected');
 
-            /************************* Ads Routing Starts Here **************************/
+            /************************* Ads Routing Ends Here **************************/
+
+            /************************* Membership Plans Routing Starts Here **************************/
+
+            Route::get('/membership-plans', 'App\Http\Controllers\Admin\MembershipPlanController@index')->name('admin.membership-plans.index');
+            Route::post('/membership-plans', 'App\Http\Controllers\Admin\MembershipPlanController@index')->name('admin.membership-plans.search');
+            Route::get('/add-membership-plan', 'App\Http\Controllers\Admin\MembershipPlanController@create')->name('admin.membership-plans.create');
+            Route::post('/add-membership-plan', 'App\Http\Controllers\Admin\MembershipPlanController@store')->name('admin.membership-plans.store');
+            Route::get('/edit-membership-plan/{id}', 'App\Http\Controllers\Admin\MembershipPlanController@edit')->name('admin.membership-plans.edit');
+            Route::post('/update-membership-plan', 'App\Http\Controllers\Admin\MembershipPlanController@update')->name('admin.membership-plans.update');
+            Route::delete('/delete-membership-plan/{id}', 'App\Http\Controllers\Admin\MembershipPlanController@destroy')->name('admin.membership-plans.destroy');
+            Route::get('/delete-membership-plan/{id}', 'App\Http\Controllers\Admin\MembershipPlanController@deletePlan')->name('admin.membership-plans.delete-alternative');
+            Route::get('/update-membership-plan-status/{id}/{value}', 'App\Http\Controllers\Admin\MembershipPlanController@changeStatus')->name('admin.membership-plans.status');
+
+            /************************* Membership Plans Routing Ends Here **************************/
+
+            /************************* User Subscriptions Routing Starts Here **************************/
+
+            Route::get('/user-subscriptions', 'App\Http\Controllers\Admin\UserSubscriptionController@index')->name('admin.user-subscriptions.index');
+            Route::post('/user-subscriptions', 'App\Http\Controllers\Admin\UserSubscriptionController@index')->name('admin.user-subscriptions.search');
+            Route::get('/add-user-subscription', 'App\Http\Controllers\Admin\UserSubscriptionController@create')->name('admin.user-subscriptions.create');
+            Route::post('/add-user-subscription', 'App\Http\Controllers\Admin\UserSubscriptionController@store')->name('admin.user-subscriptions.store');
+            Route::get('/edit-user-subscription/{id}', 'App\Http\Controllers\Admin\UserSubscriptionController@edit')->name('admin.user-subscriptions.edit');
+            Route::post('/update-user-subscription', 'App\Http\Controllers\Admin\UserSubscriptionController@update')->name('admin.user-subscriptions.update');
+            Route::delete('/delete-user-subscription/{id}', 'App\Http\Controllers\Admin\UserSubscriptionController@destroy')->name('admin.user-subscriptions.destroy');
+            Route::get('/show-user-subscription/{id}', 'App\Http\Controllers\Admin\UserSubscriptionController@show')->name('admin.user-subscriptions.show');
+            Route::get('/cancel-user-subscription/{id}', 'App\Http\Controllers\Admin\UserSubscriptionController@cancel')->name('admin.user-subscriptions.cancel');
+            Route::get('/renew-user-subscription/{id}', 'App\Http\Controllers\Admin\UserSubscriptionController@renew')->name('admin.user-subscriptions.renew');
+
+            /************************* User Subscriptions Routing Ends Here **************************/
+
+            /************************* Transactions Routing Starts Here **************************/
+
+            Route::get('/transactions', 'App\Http\Controllers\Admin\TransactionController@index')->name('admin.transactions.index');
+            Route::post('/transactions', 'App\Http\Controllers\Admin\TransactionController@index')->name('admin.transactions.search');
+            Route::get('/transactions/{id}', 'App\Http\Controllers\Admin\TransactionController@show')->name('admin.transactions.show');
+            Route::get('/transactions/{id}/refund', 'App\Http\Controllers\Admin\TransactionController@refund')->name('admin.transactions.refund');
+            Route::get('/transactions/export', 'App\Http\Controllers\Admin\TransactionController@export')->name('admin.transactions.export');
+            Route::get('/transactions/stats', 'App\Http\Controllers\Admin\TransactionController@getStats')->name('admin.transactions.stats');
+            Route::get('/user-transactions/{userId}', 'App\Http\Controllers\Admin\TransactionController@userTransactions')->name('admin.transactions.user');
+
+            /************************* Transactions Routing Ends Here **************************/
 
             /************************* Ads Routing Starts Here **************************/
             Route::get('/news-api', 'App\Http\Controllers\Admin\NewsApiController@index');
@@ -375,37 +443,122 @@ Route::middleware('admin-language:web')->group(function () {
     
 });
 
+// Membership & Payment routes
+Route::middleware(['auth','site-language'])->group(function () {
+    // Membership management
+    Route::get('/membership', [MembershipController::class, 'index'])->name('membership.index');
+    Route::post('/membership/subscribe', [MembershipController::class, 'subscribe'])->name('membership.subscribe');
+    Route::get('/membership/status', [MembershipController::class, 'status'])->name('membership.status');
 
+    // Payment (Stripe & Paypal)
+    Route::post('/payment/stripe', [PaymentController::class, 'stripe'])->name('payment.stripe');
+    Route::post('/payment/paypal', [PaymentController::class, 'paypal'])->name('payment.paypal');
+    Route::post('/membership/pay', [PaymentController::class, 'payMembership'])->middleware('auth');
+});
+
+// Webhooks
+Route::post('/webhooks/stripe', [PaymentController::class, 'stripeWebhook'])->name('webhooks.stripe');
+Route::post('/webhooks/paypal', [PaymentController::class, 'paypalWebhook'])->name('webhooks.paypal');
+
+// User Transaction History
+
+// Site Transaction Routes
+Route::middleware(["auth","site-language"])->group(function () {
+    Route::get("/my-transactions", [App\Http\Controllers\Site\TransactionController::class, "index"])->name("transactions.index");
+    Route::get("/my-transactions/analytics", [App\Http\Controllers\Site\TransactionController::class, "analytics"])->name("transactions.analytics");
+    Route::get("/my-transactions/dashboard", [App\Http\Controllers\Site\TransactionController::class, "dashboard"])->name("transactions.dashboard");
+    Route::get("/my-transactions/{id}", [App\Http\Controllers\Site\TransactionController::class, "show"])->name("transactions.show");
+    Route::get("/my-transactions/{id}/invoice", [App\Http\Controllers\Site\TransactionController::class, "downloadInvoice"])->name("transactions.invoice");
+    Route::get("/my-transactions/{id}/export", [App\Http\Controllers\Site\TransactionController::class, "exportSingle"])->name("transactions.export.single");
+});
+Route::middleware(['auth','site-language'])->group(function () {
+    Route::get('/transactions', [App\Http\Controllers\Site\TransactionController::class, 'index'])->name('user.transactions.index');
+    Route::get('/transactions/{id}', [App\Http\Controllers\Site\TransactionController::class, 'show'])->name('user.transactions.show');
+    Route::get('/transactions/{id}/invoice', [App\Http\Controllers\Site\TransactionController::class, 'downloadInvoice'])->name('user.transactions.invoice');
+    Route::get('/transactions/stats', [App\Http\Controllers\Site\TransactionController::class, 'getStats'])->name('user.transactions.stats');
+});
 
 /************************* Site Routes Starts Here **************************/
-    Route::get('/share-blog', 'App\Http\Controllers\ShareController@shareBlog');
-    Route::middleware(['check.app.installation', 'check.app.code_verified','maintenance'])
-        ->get('/', 'App\Http\Controllers\Site\SiteController@index');
-    Route::get('/login','App\Http\Controllers\Site\SiteAuthController@login')->middleware(['check.app.installation','check.app.code_verified','maintenance']);
-    Route::post('/do-user-login', 'App\Http\Controllers\Site\SiteAuthController@doLogin');
-    Route::get('/signup','App\Http\Controllers\Site\SiteAuthController@signup')->middleware(['check.app.installation','check.app.code_verified','maintenance']);
-    Route::post('/do-user-signup', 'App\Http\Controllers\Site\SiteAuthController@doSignup');
-    Route::get('/forget-password','App\Http\Controllers\Site\SiteAuthController@forgetPassword')->middleware(['check.app.installation','check.app.code_verified','maintenance']);
-    Route::post('/do-forget-password', 'App\Http\Controllers\Site\SiteAuthController@doForgetPassword');
-    Route::get('/reset-password','App\Http\Controllers\Site\SiteAuthController@resetPassword')->middleware(['check.app.installation','check.app.code_verified','maintenance']);
-    Route::post('/do-reset-password', 'App\Http\Controllers\Site\SiteAuthController@doResetPassword');
-    Route::get('/profile','App\Http\Controllers\Site\SiteAuthController@profile')->middleware(['check.app.installation','check.app.code_verified','maintenance']);
-    Route::post('/update-profile', 'App\Http\Controllers\Site\SiteAuthController@doUpdateProfile');
-    Route::get('/category/{slug}','App\Http\Controllers\Site\SiteController@blog')->middleware(['check.app.installation','check.app.code_verified','maintenance']);
-    Route::get('/category/{category_slug}/{sub_category_slug}','App\Http\Controllers\Site\SiteController@blogSubCatgory')->middleware(['check.app.installation','check.app.code_verified']);
-    Route::get('/blog/{slug}','App\Http\Controllers\Site\SiteController@detail')->middleware(['check.app.installation','check.app.code_verified','maintenance']);
-    Route::post('/submit-comment', 'App\Http\Controllers\Site\SiteController@submitComment');
-    Route::get('/all-blogs','App\Http\Controllers\Site\SiteController@allBlogs')->middleware(['check.app.installation','check.app.code_verified','maintenance']);
-    Route::get('/search-blog','App\Http\Controllers\Site\SiteController@searchBlogs')->middleware(['check.app.installation','check.app.code_verified','maintenance']);
-    Route::get('/saved-stories','App\Http\Controllers\Site\SiteController@savedStories')->middleware(['check.app.installation','check.app.code_verified','maintenance']);
-    Route::get('/fetch', 'App\Http\Controllers\Site\SiteController@fetch');
-    Route::get('/contact-us','App\Http\Controllers\Site\ContactController@index')->middleware(['check.app.installation','check.app.code_verified','maintenance']);
-    Route::get('/{page_name}','App\Http\Controllers\Site\CmsController@index')->middleware(['check.app.installation','check.app.code_verified','maintenance']);
-    Route::get('/logout','App\Http\Controllers\Site\SiteAuthController@logout');
-    Route::post('/add-remove-bookmark','App\Http\Controllers\Site\SiteController@addRemoveBookmark');
 
+Route::middleware(['site-language'])->group(function () {
+
+    // Donation routes - Publiques pour permettre aux guests de faire des dons
+    Route::get('/donate', [DonationController::class, 'showForm'])->name('donate.form');
+    Route::post('/donate', [DonationController::class, 'process'])->name('donate.process');
+    Route::get('/donation', [PaymentController::class, 'showDonationForm'])->name('donation.form');
+    Route::get('/donation/success', function() { return view('donation.success'); })->name('donation.success');
+    Route::get('/donation/cancel', function() { return view('donation.cancel'); })->name('donation.cancel');
+
+    // Public Membership & Payment routes
+    Route::get('/membership/plans', [PaymentController::class, 'showMembershipPlans'])->name('membership.plans');
+    Route::get('/membership-plans', [PaymentController::class, 'showMembershipPlans'])->name('membership.plans.alternative');
+    Route::get('/membership/subscribe/{planId}', [PaymentController::class, 'subscribe'])->name('membership.subscribe.plan');
+
+    // Payment processing routes
+    Route::post('/payment/stripe/subscription', [PaymentController::class, 'processStripeSubscription'])->name('payment.stripe.subscription');
+    Route::post('/payment/paypal/subscription', [PaymentController::class, 'processPayPalSubscription'])->name('payment.paypal.subscription');
+    Route::post('/payment/stripe/donation', [PaymentController::class, 'processStripeDonation'])->name('payment.stripe.donation');
+    Route::post('/payment/paypal/donation', [PaymentController::class, 'processPayPalDonation'])->name('payment.paypal.donation');
+
+    // Payment result pages
+    Route::get('/payment/success', function() {
+        return view('site.payment.success');
+    })->name('payment.success');
+
+    Route::get('/payment/cancel', function() {
+        return view('site.payment.cancel');
+    })->name('payment.cancel');
+
+    // Restrict blog detail to subscribed users
+    Route::get('/blog/{slug}', 'App\Http\Controllers\Site\SiteController@detail')
+        ->middleware(['check.app.installation','check.app.code_verified','maintenance','site-language']);
+
+    Route::get('/share-blog', 'App\Http\Controllers\ShareController@shareBlog');
+    Route::middleware(['check.app.installation', 'check.app.code_verified','maintenance','site-language'])
+        ->get('/', 'App\Http\Controllers\Site\SiteController@index')->name('home');
+    Route::get('/login','App\Http\Controllers\Site\SiteAuthController@login')->middleware(['check.app.installation','check.app.code_verified','maintenance','site-language']);
+    Route::post('/do-user-login', 'App\Http\Controllers\Site\SiteAuthController@doLogin');
+    Route::get('/signup','App\Http\Controllers\Site\SiteAuthController@signup')->middleware(['check.app.installation','check.app.code_verified','maintenance','site-language']);
+    Route::post('/do-user-signup', 'App\Http\Controllers\Site\SiteAuthController@doSignup');
+    Route::get('/forget-password','App\Http\Controllers\Site\SiteAuthController@forgetPassword')->middleware(['check.app.installation','check.app.code_verified','maintenance','site-language']);
+    Route::post('/do-forget-password', 'App\Http\Controllers\Site\SiteAuthController@doForgetPassword');
+    Route::get('/reset-password','App\Http\Controllers\Site\SiteAuthController@resetPassword')->middleware(['check.app.installation','check.app.code_verified','maintenance','site-language']);
+    Route::post('/do-reset-password', 'App\Http\Controllers\Site\SiteAuthController@doResetPassword');
+    Route::get('/category/{slug}','App\Http\Controllers\Site\SiteController@blog')->middleware(['check.app.installation','check.app.code_verified','maintenance','site-language']);
+    Route::get('/category/{category_slug}/{sub_category_slug}','App\Http\Controllers\Site\SiteController@blogSubCatgory')->middleware(['check.app.installation','check.app.code_verified']);
+    Route::post('/submit-comment', 'App\Http\Controllers\Site\SiteController@submitComment');
+    Route::get('/all-blogs','App\Http\Controllers\Site\SiteController@allBlogs')->middleware(['check.app.installation','check.app.code_verified','maintenance','site-language']);
+    Route::get('/search-blog','App\Http\Controllers\Site\SiteController@searchBlogs')->middleware(['check.app.installation','check.app.code_verified','maintenance','site-language']);
+    Route::get('/saved-stories','App\Http\Controllers\Site\SiteController@savedStories')->middleware(['check.app.installation','check.app.code_verified','maintenance','site-language']);
+    Route::get('/fetch', 'App\Http\Controllers\Site\SiteController@fetch');
+    Route::get('/contact-us','App\Http\Controllers\Site\ContactController@index')->middleware(['check.app.installation','check.app.code_verified','maintenance','site-language']);
+    Route::get('/about-us', function() {
+        return view('site.about-us.index');
+    })->middleware(['check.app.installation','check.app.code_verified','maintenance','site-language']);
+    Route::get('/{page_name}','App\Http\Controllers\Site\CmsController@index')->where('page_name', '^(?!profile$).+')->middleware(['check.app.installation','check.app.code_verified','maintenance','site-language']);
+    Route::get('/logout','App\Http\Controllers\Site\SiteAuthController@logout');
+    Route::post('/add-remove-bookmark', 'App\Http\Controllers\Site\SiteController@addRemoveBookmark');
+});
+
+// Site Language Routes - HORS du groupe site-language pour éviter les boucles
+Route::get('/setlang', 'App\Http\Controllers\Site\LanguageController@changeLanguage')->middleware(['check.app.installation','check.app.code_verified']);
+Route::get('/api/languages', 'App\Http\Controllers\Site\LanguageController@getAvailableLanguages');
 
 /************************* Site Routes Ends Here **************************/
     Route::get('/unauthorized', function () {
         return view('unauthorized');
     })->name('unauthorized');
+
+Route::get('/paypal/success', function() {
+    // Traiter la confirmation Paypal ici
+    return view('payment.success');
+});
+Route::get('/paypal/cancel', function() {
+    return view('payment.cancel');
+});
+
+// Routes pour le profil utilisateur
+Route::middleware(['auth','site-language'])->group(function () {
+    Route::get('/profile', [App\Http\Controllers\Site\ProfileController::class, 'index'])->name('profile.index');
+    Route::post('/profile/update', [App\Http\Controllers\Site\ProfileController::class, 'updateProfile'])->name('profile.update');
+});

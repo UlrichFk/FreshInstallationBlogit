@@ -129,7 +129,7 @@
                                     @foreach($views as $view) 
                                         <tr>
                                             <td>
-                                            @if(isset($view->user) && $view->user!=''){{$view->user->name}}@else Guest @endif
+                                            @if(isset($view->user) && $view->user!=''){{$view->user->name}}@else {{ __("lang.admin_guest") }} @endif
                                             </td>
                                             <td>
                                                 {{date("d-m-Y",strtotime($view->created_at))}}</br>
@@ -165,7 +165,7 @@
                                     @foreach($likes as $like) 
                                         <tr>
                                             <td>
-                                            @if(isset($like->user) && $like->user!=''){{$like->user->name}}@else Guest @endif
+                                            @if(isset($like->user) && $like->user!=''){{$like->user->name}}@else {{ __("lang.admin_guest") }} @endif
                                             </td>
                                             <td>
                                                 {{date("d-m-Y",strtotime($like->created_at))}}</br>
@@ -205,7 +205,7 @@
                                     @foreach($comments as $comment) 
                                         <tr>
                                             <td>
-                                            @if(isset($comment->user) && $comment->user!=''){{$comment->user->name}}@else Guest @endif
+                                            @if(isset($comment->user) && $comment->user!=''){{$comment->user->name}}@else {{ __("lang.admin_guest") }} @endif
                                             </td>
                                             <td>
                                             @if(isset($comment->comment) && $comment->comment!=''){{$comment->comment}}@else -- @endif
@@ -290,7 +290,7 @@
                                     @foreach($bookmarks as $bookmark) 
                                         <tr>
                                             <td>
-                                                @if(isset($bookmark->user) && $bookmark->user!=''){{$bookmark->user->name}}@else Guest @endif
+                                                @if(isset($bookmark->user) && $bookmark->user!=''){{$bookmark->user->name}}@else {{ __("lang.admin_guest") }} @endif
                                             </td>
                                             <td>
                                                 {{date("d-m-Y",strtotime($bookmark->created_at))}}</br>
@@ -326,7 +326,7 @@
                                     @foreach($shares as $share) 
                                         <tr>
                                             <td>
-                                            @if(isset($share->user) && $share->user!=''){{$share->user->name}}@else Guest @endif
+                                            @if(isset($share->user) && $share->user!=''){{$share->user->name}}@else {{ __("lang.admin_guest") }} @endif
                                             </td>
                                             <td>
                                                 {{date("d-m-Y",strtotime($share->created_at))}}</br>
@@ -370,7 +370,7 @@
                                                     $options = \Helpers::getParticularBlogPollQuestionOptions($poll->blog_id);
                                                     
                                                     // Define labels for options
-                                                    $optionLabels = ['A' => 'Yes', 'B' => 'No', 'C' => 'Both', 'D' => 'None of these'];
+                                                    $optionLabels = ['A' => '{{ __("lang.admin_yes") }}', 'B' => '{{ __("lang.admin_no") }}', 'C' => '{{ __("lang.admin_both") }}', 'D' => '{{ __("lang.admin_no") }}ne of these'];
                                                 @endphp
                                                 @if(count($options))
                                                     @foreach($options as $index => $option)
@@ -380,7 +380,7 @@
                                                         @endphp
                                                         <p>
                                                             {{ $alphabet }}: {{ $optionLabels[$alphabet] }} (
-                                                            Votes: {{ \App\Models\BlogAnalytic::where('type', 'blog_poll_option')
+                                                            {{ __("lang.admin_votes") }}: {{ \App\Models\BlogAnalytic::where('type', 'blog_poll_option')
                                                                     ->where('blog_poll_option_id', $option->id)
                                                                     ->count() }} )
                                                         </p>

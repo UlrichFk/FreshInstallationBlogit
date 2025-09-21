@@ -45,5 +45,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PermissionSeeder::class);
         $this->call(RoleSeeder::class);
         $this->call(RoleHasPermissionSeeder::class);
+        $this->call(WatermarkSettingSeeder::class);
+        $this->call(MembershipPlanSeeder::class);
     }
 }

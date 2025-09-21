@@ -29,6 +29,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'stripe_customer_id',
     ];
 
     /**
@@ -55,6 +56,45 @@ class User extends Authenticatable
         $this->roles()->sync($role, false);
     }
 
+    public function subscriptions()
+    {
+        return $this->hasMany(UserSubscription::class);
+    }
+
+    public function activeSubscription()
+    {
+        return $this->subscriptions()
+                    ->where('status', 'active')
+                    ->where('end_date', '>', now())
+                    ->latest()
+                    ->first();
+    }
+
+    public function hasActiveSubscription()
+    {
+        return $this->activeSubscription() !== null;
+    }
+
+    public function hasActiveSubscriptionAttribute()
+    {
+        return $this->hasActiveSubscription();
+    }
+
+    public function canAccessPremiumContent()
+    {
+        return $this->hasActiveSubscription();
+    }
+
+    public function donations()
+    {
+        return $this->hasMany(Donation::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
     /**
     * Fetch list of user from here
     **/
@@ -65,8 +105,7 @@ class User extends Authenticatable
             $pagination = (isset($search['perpage']))?$search['perpage']:config('constant.pagination');
             if(isset($search['search']) && !empty($search['search']))
             {
-                // $obj = $obj->whereLike('name',trim($search['name']));
-                $keyword = $_GET['search'];
+                $keyword = $search['search'];
                 $obj = $obj->where(function($q) use ($keyword){
                     $q->where(DB::raw('LOWER(name)'), 'like', '%'.strtolower($keyword). '%')
                     ->orWhere(DB::raw('phone'),'like','%'.strtolower($keyword). '%')
@@ -97,7 +136,7 @@ class User extends Authenticatable
             $pagination = (isset($search['perpage']))?$search['perpage']:config('constant.pagination');
             if(isset($search['search']) && !empty($search['search']))
             {
-                $keyword = $_GET['search'];
+                $keyword = $search['search'];
                 $obj = $obj->where(function($q) use ($keyword){
                     $q->where(DB::raw('LOWER(name)'), 'like', '%'.strtolower($keyword). '%')
                     ->orWhere(DB::raw('email'),'like','%'.strtolower($keyword). '%');

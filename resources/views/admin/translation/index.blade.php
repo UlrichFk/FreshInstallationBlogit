@@ -25,10 +25,10 @@
           <div class="col-sm-3 display-inline-block">
               <select class="form-control" name="group">
                 <option value="">{{__('lang.admin_select_group')}}</option> 
-                <option value="frontend" @if(isset($_GET['group']) && $_GET['group']!='') @if($_GET['group'] == 'frontend') selected @endif @endif>Website</option> 
-                <option value="admin" @if(isset($_GET['group']) && $_GET['group']!='') @if($_GET['group'] == 'admin') selected @endif @endif>Admin</option> 
-                <option value="api" @if(isset($_GET['group']) && $_GET['group']!='') @if($_GET['group'] == 'api') selected @endif @endif>API</option> 
-                <option value="message_alerts" @if(isset($_GET['group']) && $_GET['group']!='') @if($_GET['group'] == 'message_alerts') selected @endif @endif>Message Alerts</option> 
+                <option value="frontend" @if(isset($_GET['group']) && $_GET['group']!='') @if($_GET['group'] == 'frontend') selected @endif @endif>{{ __("lang.admin_website") }}</option> 
+                <option value="admin" @if(isset($_GET['group']) && $_GET['group']!='') @if($_GET['group'] == 'admin') selected @endif @endif>{{ __("lang.admin_admin") }}</option> 
+                <option value="api" @if(isset($_GET['group']) && $_GET['group']!='') @if($_GET['group'] == 'api') selected @endif @endif>{{ __("lang.admin_api") }}</option> 
+                <option value="message_alerts" @if(isset($_GET['group']) && $_GET['group']!='') @if($_GET['group'] == 'message_alerts') selected @endif @endif>{{ __("lang.admin_message_alerts") }}</option> 
               </select>
           </div>
           <div class="col-sm-3 display-inline-block">
@@ -70,13 +70,13 @@
       <form class="add-new-record pt-0 row g-2" id="add-record" onsubmit="return validateTranslation('add-record');" action="{{url('admin/add-translation')}}" method="POST"> @csrf 
         <div class="col-sm-12">
           <div class="mb-1">
-            <label class="form-label" for="group">Group <span class="required">*</span></label>
+            <label class="form-label" for="group">{{ __("lang.admin_group") }} <span class="required">*</span></label>
               <select class="form-control" name="group" required>
                 <option value="">{{__('lang.admin_group')}}</option> 
-                <option value="frontend">Website</option> 
-                <option value="admin">Admin</option> 
-                <option value="api">API</option> 
-                <option value="message_alerts">Message Alerts</option> 
+                <option value="frontend">{{ __("lang.admin_website") }}</option> 
+                <option value="admin">{{ __("lang.admin_admin") }}</option> 
+                <option value="api">{{ __("lang.admin_api") }}</option> 
+                <option value="message_alerts">{{ __("lang.admin_message_alerts") }}</option> 
               </select>
           </div>
         </div>

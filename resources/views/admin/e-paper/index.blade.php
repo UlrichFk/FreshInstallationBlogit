@@ -17,7 +17,7 @@
         <div class="row">
           <h5 class="card-title display-inline-block">{{__('lang.admin_filters')}}</h5>
           <div class="form-group col-sm-3 display-inline-block" >
-              <input type="text" class="form-control" placeholder="Search name" name="name" value="@if(isset($_GET['name']) && $_GET['name']!=''){{$_GET['name']}}@endif">
+              <input type="text" class="form-control" placeholder="{{ __("lang.admin_search_name") }}" name="name" value="@if(isset($_GET['name']) && $_GET['name']!=''){{$_GET['name']}}@endif">
           </div>
           <div class="col-sm-3 display-inline-block">
               <select class="form-control" name="status">

@@ -15,16 +15,27 @@ class AuthenticateApi
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $headerData = ($request->header('api-token')? $request->header('api-token'):$request->header('api-token'));
-        $tokenData = \Helpers::validateAuthToken($headerData);
-        if (! $tokenData) {
-            $response = [
+        $apiToken = $request->header('api-token');
+        
+        if (!$apiToken) {
+            return response()->json([
                 'success' => false,
-                'message' => 'Unauthenticated',
-            ];
-            return response($response, 401);
+                'message' => 'Token d\'API manquant',
+            ], 401);
         }
-        $request->userAuthData = $tokenData;
+
+        $user = \Helpers::validateAuthToken($apiToken);
+        
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Token d\'API invalide',
+            ], 401);
+        }
+
+        // Ajouter l'utilisateur à la requête pour compatibilité
+        $request->userAuthData = $user;
+        
         return $next($request);
     }
 }

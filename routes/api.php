@@ -36,6 +36,13 @@ Route::post('add-analytics', 'App\Http\Controllers\API\BlogAPIController@addAnal
 Route::post('submit-query', 'App\Http\Controllers\API\SettingAPIController@doSubmitQuery');
 Route::match(['get', 'head'], 'get-app-home-page', 'App\Http\Controllers\API\BlogAPIController@getAppHomePage');
 
+// Donation API - Routes publiques pour permettre aux guests de faire des dons
+Route::get('donation-stats', 'App\Http\Controllers\API\DonationAPIController@getDonationStats');
+Route::post('create-donation', 'App\Http\Controllers\API\DonationAPIController@createDonation');
+Route::post('confirm-donation', 'App\Http\Controllers\API\DonationAPIController@confirmDonation');
+Route::get('recent-donations', 'App\Http\Controllers\API\DonationAPIController@getRecentDonations');
+Route::get('donation-goals', 'App\Http\Controllers\API\DonationAPIController@getDonationGoals');
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -59,4 +66,24 @@ Route::middleware('apiauth:api')->group(function () {
     Route::post('report-short-video-comment', 'App\Http\Controllers\API\BlogAPIController@doReportShortVideoComment');
     Route::post('delete-short-video-comment', 'App\Http\Controllers\API\BlogAPIController@doDeleteShortVideoComment');
 
+    // Membership API
+    Route::get('membership-plans', 'App\Http\Controllers\API\MembershipAPIController@getPlans');
+    Route::get('user-subscription', 'App\Http\Controllers\API\MembershipAPIController@getUserSubscription');
+    Route::get('premium-content', 'App\Http\Controllers\API\MembershipAPIController@getPremiumContent');
+    Route::post('check-access', 'App\Http\Controllers\API\MembershipAPIController@checkAccess');
+    Route::post('cancel-subscription', 'App\Http\Controllers\API\MembershipAPIController@cancelSubscription');
+    Route::get('subscription-history', 'App\Http\Controllers\API\MembershipAPIController@getSubscriptionHistory');
+    
+    // Donation API - Routes authentifiées uniquement pour les utilisateurs connectés
+    Route::get('user-donations', 'App\Http\Controllers\API\DonationAPIController@getUserDonations');
+    
+    // Transaction API
+    Route::get('user-transactions', 'App\Http\Controllers\API\TransactionAPIController@getUserTransactions');
+    Route::get('transaction-details/{id}', 'App\Http\Controllers\API\TransactionAPIController@getTransactionDetails');
+    Route::get('user-transaction-stats', 'App\Http\Controllers\API\TransactionAPIController@getUserTransactionStats');
+    Route::get('recent-transactions', 'App\Http\Controllers\API\TransactionAPIController@getRecentTransactions');
 });
+
+// Restrict blog detail to subscribed users
+Route::match(['get', 'head'],'blog-detail/{id}', 'App\Http\Controllers\API\BlogAPIController@getDetail')
+    ->middleware('check.subscription');

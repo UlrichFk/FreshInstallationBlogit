@@ -1,133 +1,1042 @@
 @extends('site/layout/site-app')
 
 @section('content')
-<style type="text/css">
-.eye {
+
+<style>
+.profile-container {
+    padding: 4rem 0;
+    min-height: calc(100vh - 200px);
+    background: linear-gradient(135deg, rgba(15, 52, 96, 0.05) 0%, rgba(83, 52, 131, 0.05) 100%);
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.profile-header h1 {
+    color: var(--text-primary);
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+}
+
+.profile-header p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+.profile-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.profile-navigation {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-medium);
+    border: 1px solid var(--border-color);
+}
+
+.nav-tabs {
+    border: none;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.nav-tabs .nav-link {
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-secondary);
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-tabs .nav-link:hover {
+    background: rgba(52, 152, 219, 0.15);
+    color: var(--accent-color);
+}
+
+.nav-tabs .nav-link.active {
+    background: rgba(52, 152, 219, 0.2);
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+}
+
+.nav-tabs .nav-link i {
+    font-size: 1.1rem;
+}
+
+.profile-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: var(--shadow-medium);
+    border: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.profile-card::before {
+    content: '';
     position: absolute;
-    right: 20px;
-    top: 55%;
-    transform: translateY(-50%);
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-accent);
+}
+
+.profile-avatar {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.avatar-container {
+    position: relative;
+    display: inline-block;
+}
+
+.avatar-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--border-color);
+    background: var(--gradient-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: var(--text-primary);
+    margin: 0 auto 1rem;
+}
+
+.avatar-upload {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: var(--gradient-accent);
+    border: 3px solid var(--card-bg);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+    transition: var(--transition);
 }
 
-.fa-eye{
-    font-size: 18px;
-    color: #666;
+.avatar-upload:hover {
+    transform: scale(1.1);
 }
 
-.fa-eye-slash {
-    font-size: 18px;
-    color: #666;
+.avatar-upload i {
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.profile-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-label {
+    display: block;
+    color: var(--text-primary);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.form-control {
+    background: var(--primary-color);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: var(--transition);
+    width: 100%;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #4a9eff;
+    box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.1);
+    background: var(--primary-color);
+}
+
+.form-control::placeholder {
+    color: var(--text-muted);
+}
+
+.password-field {
+    position: relative;
+}
+
+.eye-toggle {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: var(--transition);
+}
+
+.eye-toggle:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.subscription-status {
+    background: var(--primary-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.subscription-status h4 {
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.subscription-status.active h4 {
+    color: #22c55e;
+}
+
+.subscription-status.inactive h4 {
+    color: #f59e0b;
+}
+
+.subscription-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.subscription-info {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.subscription-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.subscription-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.subscription-btn.primary {
+    background: var(--gradient-accent);
+    color: var(--text-primary);
+}
+
+.subscription-btn.secondary {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+.subscription-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-light);
+}
+
+.submit-btn {
+    background: var(--gradient-accent);
+    border: none;
+    border-radius: 12px;
+    padding: 1rem 2rem;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    width: 100%;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+.error-message {
+    background: rgba(220, 38, 38, 0.1);
+    border: 1px solid rgba(220, 38, 38, 0.3);
+    color: #dc2626;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.success-message {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    color: #22c55e;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+/* Stats Cards */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: var(--primary-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: var(--transition);
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--accent-color);
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Recent Activity */
+.activity-list {
+    background: var(--primary-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--gradient-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary);
+}
+
+.activity-content h6 {
+    color: var(--text-primary);
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.activity-content p {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 0.8rem;
+}
+
+.activity-time {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    margin-left: auto;
+}
+
+/* Tab Content */
+.tab-content {
+    display: block;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.show.active {
+    display: block !important;
+}
+
+
+/* Styles spécifiques pour chaque onglet - laisser Bootstrap (ou le fallback) gérer l'affichage */
+/* Les .tab-pane sont cachés par défaut via .fade et affichés avec .show.active */
+
+/* Responsive */
+@media (max-width: 768px) {
+    .profile-container {
+        padding: 2rem 0;
+    }
+    
+    .profile-header h1 {
+        font-size: 2rem;
+    }
+    
+    .profile-card {
+        padding: 2rem;
+        margin: 1rem;
+    }
+    
+    .profile-info {
+        grid-template-columns: 1fr;
+    }
+    
+    .subscription-details {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .subscription-actions {
+        justify-content: center;
+    }
+    
+    .nav-tabs {
+        flex-direction: column;
+    }
+    
+    .nav-tabs .nav-link {
+        text-align: left;
+    }
 }
 </style>
+
 <div class="main-container">
-	
-		<main class="site-main">
-			<!-- Contact-Us Section -->	
-			<div class="container-fluid no-left-padding no-right-padding contact-section">		
-			</div>
-			<!-- Page Content -->
-			<div class="container-fluid no-left-padding no-right-padding">
-				<!-- Container -->
-				<div class="container">
-					<div class="contact-info">
-						<div class="block-title">
-							<h3>{{__('lang.website_my_profile')}}</h3>
-						</div>
-					</div>
-					<div class="contact-form">
-						<form class="row" id="user-profile" onsubmit="return validateAlphabeticName() && validateEmail() && validatePhoneNumber() && validatePassword();" action="{{url('/update-profile')}}" method="POST" enctype="multipart/form-data">
-							@csrf
-                            <input type="hidden" name="id" value="{{$row->id}}">
-							<div class="col-md-12 form-group" style="text-align: -webkit-center;">
-								<div class="col-md-4 form-group">
-									<input type="text" class="form-control" placeholder="{{__('lang.website_name_placeholder')}}" name="name" id="name" value="{{ $row->name }}" required>
-								</div>
-								<div class="col-md-4 form-group">
-									<input type="text" class="form-control" placeholder="{{__('lang.website_email_placeholder')}}" name="email" id="email" value="{{ $row->email }}" required>
-								</div>
-								<div class="col-md-4 form-group">
-									<input type="text" class="form-control"  placeholder="{{__('lang.website_phone_placeholder')}}" name="phone" id="phone" value="{{ $row->phone }}" inputmode="numeric"maxlength="10" required>
-								</div>
-								<div class="col-md-4 form-group">
-							      <input type="password" class="form-control" placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" name="password" id="password">
-							      <span class="eye" onclick="togglePassword()">
-						                <i class="fa fa-eye-slash" id="eye-icon"></i>
-						           </span>
-							    </div>
-								<div class="col-md-4 form-group">
-								<button type="submit" class="submit">{{__('lang.website_update')}}</button>
-							    </div>
-							</div>
-						</form>
-					</div>
-				</div>
-				<!-- Container /- -->
-			</div>
-			<!-- Page Content /- -->	
-		</main>
-	</div>
+    <main class="site-main">
+        <div class="profile-container">
+            <div class="profile-header">
+                <h1>👤 {{{{ __('lang.website_my_profile') }}}}</h1>
+                <p>{{ __('lang.site_manage_personal_info_subscription_activities') }}</p>
+            </div>
+
+            <div class="profile-content">
+                <!-- Navigation par onglets -->
+                <div class="profile-navigation">
+                    <ul class="nav nav-tabs" id="profileTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">
+                                <i class="fa fa-home"></i> Vue d'ensemble
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab">
+                                <i class="fa fa-user"></i> Profil
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="subscription-tab" data-bs-toggle="tab" data-bs-target="#subscription" type="button" role="tab">
+                                <i class="fa fa-crown"></i> {{ __('lang.site_subscription') }}
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="transactions-tab" data-bs-toggle="tab" data-bs-target="#transactions" type="button" role="tab">
+                                <i class="fa fa-receipt"></i> Transactions
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="activity-tab" data-bs-toggle="tab" data-bs-target="#activity" type="button" role="tab">
+                                <i class="fa fa-chart-line"></i> Activité
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Contenu des onglets -->
+                <div class="tab-content" id="profileTabContent">
+                    <!-- Vue d'ensemble -->
+                    <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+                        <div class="profile-card">
+                            <div class="profile-avatar">
+                                <div class="avatar-container">
+                                    <div class="avatar-image">
+                                        @if($user->photo)
+                                            <img src="{{ url('uploads/user/'.$user->photo) }}" alt="{{ $user->name }}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+                                        @else
+                                            {{ strtoupper(substr($user->name, 0, 1)) }}
+                                        @endif
+                                    </div>
+                                    <label for="avatar-upload" class="avatar-upload">
+                                        <i class="fa fa-camera"></i>
+                                    </label>
+                                    <input type="file" id="avatar-upload" name="profile_image" accept="image/*" style="display: none;">
+                                </div>
+                                <h3>{{ $user->name }}</h3>
+                                <p>{{ $user->email }}</p>
+                                @if($subscription)
+                                    <span class="badge bg-success">Premium Member</span>
+                                @else
+                                    <span class="badge bg-warning">Free Member</span>
+                                @endif
+                            </div>
+
+                            <!-- Statistiques -->
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <div class="stat-number">{{ $stats['articles_lus'] }}</div>
+                                    <div class="stat-label">{{ __("lang.site_articles_read") }}</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-number">{{ $stats['articles_sauvegardes'] }}</div>
+                                    <div class="stat-label">{{ __("lang.site_articles_saved") }}</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-number">{{ $stats['transactions'] }}</div>
+                                    <div class="stat-label">Transactions</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-number">{{ $stats['donations'] }}</div>
+                                    <div class="stat-label">Donations</div>
+                                </div>
+                            </div>
+
+                            <!-- Statut abonnement -->
+                            @if($subscription)
+                                <div class="subscription-status active">
+                                    <h4>
+                                        <i class="fa fa-check-circle"></i>
+                                        {{ __('lang.site_subscription') }} Premium Actif
+                                    </h4>
+                                    <div class="subscription-details">
+                                        <div class="subscription-info">
+                                            <p>Plan: {{ $subscription->membershipPlan->name ?? 'N/A' }}</p>
+                                            <p>Expire le: {{ \Carbon\Carbon::parse($subscription->end_date)->format('d/m/Y') }}</p>
+                                        </div>
+                                        <div class="subscription-actions">
+                                            <a href="{{ url('membership/plans') }}" class="subscription-btn secondary">
+                                                <i class="fa fa-refresh"></i> Renouveler
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="subscription-status inactive">
+                                    <h4>
+                                        <i class="fa fa-exclamation-triangle"></i>
+                                        {{ __("lang.site_no_active_subscription") }}
+                                    </h4>
+                                    <div class="subscription-details">
+                                        <div class="subscription-info">
+                                            <p>{{ __("lang.site_access_premium_with_subscription") }}</p>
+                                        </div>
+                                        <div class="subscription-actions">
+                                            <a href="{{ url('membership/plans') }}" class="subscription-btn primary">
+                                                <i class="fa fa-star"></i> Devenir Premium
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Profil -->
+                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                        <div class="profile-card">
+                            @if(session('error'))
+                                <div class="error-message">
+                                    {{ session('error') }}
+                                </div>
+                            @endif
+
+                            @if(session('success'))
+                                <div class="success-message">
+                                    {{ session('success') }}
+                                </div>
+                            @endif
+
+                            <form id="user-profile" onsubmit="return validateAlphabeticName() && validateEmail() && validatePhoneNumber() && validatePassword();" action="{{url('/profile/update')}}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                <input type="hidden" name="id" value="{{$user->id}}">
+                                
+                                <div class="profile-info">
+                                    <div class="form-group">
+                                        <label class="form-label">Nom complet</label>
+                                        <input type="text" class="form-control" placeholder="{{{{ __('lang.website_name_placeholder') }}}}" name="name" id="name" value="{{ $user->name }}" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">Adresse email</label>
+                                        <input type="email" class="form-control" placeholder="{{{{ __('lang.website_email_placeholder') }}}}" name="email" id="email" value="{{ $user->email }}" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">Téléphone</label>
+                                        <input type="tel" class="form-control" placeholder="{{{{ __('lang.website_phone_placeholder') }}}}" name="phone" id="phone" value="{{ $user->phone ?? '' }}" inputmode="numeric" maxlength="10">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">Nouveau mot de passe (optionnel)</label>
+                                        <div class="password-field">
+                                            <input type="password" class="form-control" placeholder="{{ __("lang.site_leave_empty_no_change") }}" name="password" id="password">
+                                            <button type="button" class="eye-toggle" onclick="togglePassword()">
+                                                <i class="fa fa-eye-slash" id="eye-icon"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="submit-btn">
+                                    <i class="fa fa-save"></i> {{{{ __('lang.website_update') }}}}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- {{ __('lang.site_subscription') }} -->
+                    <div class="tab-pane fade" id="subscription" role="tabpanel" aria-labelledby="subscription-tab">
+                        <div class="profile-card">
+                            <h3>Gestion de l{{ __('lang.site_subscription') }}</h3>
+                            @if($subscription)
+                                <div class="subscription-status active">
+                                    <h4>
+                                        <i class="fa fa-check-circle"></i>
+                                        {{ __('lang.site_subscription') }} Premium Actif
+                                    </h4>
+                                    <div class="subscription-details">
+                                        <div class="subscription-info">
+                                            <p><strong>Plan:</strong> {{ $subscription->membershipPlan->name ?? 'N/A' }}</p>
+                                            <p><strong>Prix:</strong> {{ $subscription->amount_paid }} {{ $subscription->currency }}</p>
+                                            <p><strong>Début:</strong> {{ \Carbon\Carbon::parse($subscription->start_date)->format('d/m/Y') }}</p>
+                                            <p><strong>Expire:</strong> {{ \Carbon\Carbon::parse($subscription->end_date)->format('d/m/Y') }}</p>
+                                            <p><strong>Jours restants:</strong> {{ \Carbon\Carbon::parse($subscription->end_date)->diffInDays(now()) }}</p>
+                                        </div>
+                                        <div class="subscription-actions">
+                                            <a href="{{ url('membership/plans') }}" class="subscription-btn secondary">
+                                                <i class="fa fa-refresh"></i> Changer de Plan
+                                            </a>
+                                            <a href="#" class="subscription-btn secondary">
+                                                <i class="fa fa-cog"></i> Gérer
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="subscription-status inactive">
+                                    <h4>
+                                        <i class="fa fa-exclamation-triangle"></i>
+                                        {{ __("lang.site_no_active_subscription") }}
+                                    </h4>
+                                    <div class="subscription-details">
+                                        <div class="subscription-info">
+                                            <p>{{ __("lang.site_access_premium_with_subscription") }}</p>
+                                            <ul>
+                                                <li>{{ __("lang.site_exclusive_articles") }}</li>
+                                                <li>{{ __("lang.site_premium_content") }}</li>
+                                                <li>Pas de publicités</li>
+                                                <li>Support prioritaire</li>
+                                            </ul>
+                                        </div>
+                                        <div class="subscription-actions">
+                                            <a href="{{ url('membership/plans') }}" class="subscription-btn primary">
+                                                <i class="fa fa-star"></i> Voir les Plans
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Transactions -->
+                    <div class="tab-pane fade" id="transactions" role="tabpanel" aria-labelledby="transactions-tab">
+                        <div class="profile-card">
+                            <h3>Historique des Transactions</h3>
+                            <div class="text-center mb-4">
+                                <a href="{{ url('transactions') }}" class="subscription-btn primary">
+                                    <i class="fa fa-external-link"></i> {{ __("lang.site_view_all_transactions") }}
+                                </a>
+                            </div>
+                            
+                            @if($transactions->count() > 0)
+                                <div class="activity-list">
+                                    @foreach($transactions as $transaction)
+                                        <div class="activity-item">
+                                            <div class="activity-icon">
+                                                <i class="fa fa-{{ $transaction->type === 'subscription' ? 'crown' : 'heart' }}"></i>
+                                            </div>
+                                            <div class="activity-content">
+                                                <h6>{{ $transaction->type_label ?? ucfirst($transaction->type) }}</h6>
+                                                <p>{{ $transaction->description }}</p>
+                                            </div>
+                                            <div class="activity-time">
+                                                {{ $transaction->created_at->diffForHumans() }}
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <div class="text-center text-muted">
+                                    <i class="fa fa-receipt fa-3x mb-3"></i>
+                                    <p>{{ __("lang.site_no_transactions_yet") }}</p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Activité -->
+                    <div class="tab-pane fade" id="activity" role="tabpanel" aria-labelledby="activity-tab">
+                        <div class="profile-card">
+                            <h3>Activité Récente</h3>
+                            
+                            <div class="activity-list">
+                                @if($recentActivity['last_read_article'])
+                                    <div class="activity-item">
+                                        <div class="activity-icon">
+                                            <i class="fa fa-eye"></i>
+                                        </div>
+                                        <div class="activity-content">
+                                            <h6>Dernier article consulté</h6>
+                                            <p>{{ $recentActivity['last_read_article']->title ?? '{{ __("lang.site_none") }}' }}</p>
+                                        </div>
+                                        <div class="activity-time">
+                                            {{ $recentActivity['last_read_article']->created_at->diffForHumans() ?? '' }}
+                                        </div>
+                                    </div>
+                                @endif
+
+                                @if($recentActivity['last_bookmark'])
+                                    <div class="activity-item">
+                                        <div class="activity-icon">
+                                            <i class="fa fa-bookmark"></i>
+                                        </div>
+                                        <div class="activity-content">
+                                            <h6>Dernier article sauvegardé</h6>
+                                            <p>{{ $recentActivity['last_bookmark']->title ?? '{{ __("lang.site_none") }}' }}</p>
+                                        </div>
+                                        <div class="activity-time">
+                                            {{ $recentActivity['last_bookmark']->created_at->diffForHumans() ?? '' }}
+                                        </div>
+                                    </div>
+                                @endif
+
+                                @if($recentActivity['last_donation'])
+                                    <div class="activity-item">
+                                        <div class="activity-icon">
+                                            <i class="fa fa-heart"></i>
+                                        </div>
+                                        <div class="activity-content">
+                                            <h6>Dernière donation</h6>
+                                            <p>{{ $recentActivity['last_donation']->amount }} {{ $recentActivity['last_donation']->currency }}</p>
+                                        </div>
+                                        <div class="activity-time">
+                                            {{ $recentActivity['last_donation']->created_at->diffForHumans() ?? '' }}
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+
+                            @if($stats['articles_lus'] == 0 && $stats['articles_sauvegardes'] == 0 && $stats['donations'] == 0)
+                                <div class="text-center text-muted">
+                                    <i class="fa fa-chart-line fa-3x mb-3"></i>
+                                    <p>{{ __("lang.site_no_activity_yet") }}</p>
+                                    <p>Commencez à explorer le contenu pour voir votre activité ici</p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
 
 <script>
+// Gestion des onglets avec Bootstrap
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM chargé, initialisation des onglets...');
+    
+    // Vérifier si Bootstrap est disponible
+    if (typeof bootstrap !== 'undefined') {
+        // Initialiser les onglets Bootstrap
+        const triggerTabList = document.querySelectorAll('#profileTabs button[data-bs-toggle="tab"]');
+        
+        triggerTabList.forEach(triggerEl => {
+            const tabTrigger = new bootstrap.Tab(triggerEl);
+            
+            triggerEl.addEventListener('click', event => {
+                event.preventDefault();
+                tabTrigger.show();
+            });
+        });
+    
+    // Activer le premier onglet par défaut
+    const firstTab = document.querySelector('#profileTabs .nav-link');
+    if (firstTab) {
+        const firstTabInstance = new bootstrap.Tab(firstTab);
+        firstTabInstance.show();
+    }
+    
+    } else {
+        // Fallback complet si Bootstrap n'est pas disponible
+        console.log('Bootstrap non disponible, utilisation du fallback personnalisé');
+        initCustomTabs();
+    }
+    
+    // Initialisation finale uniquement si Bootstrap n'est pas dispo
+    if (typeof bootstrap === 'undefined') {
+        initializeFirstTab();
+    }
+});
 
-function validateAlphabeticName() {
-  var name = document.getElementById('name').value;
-  var nameRegex = /^[a-zA-Z\s]+$/;
-  if (!nameRegex.test(name)) {
-    toastr.error("Name must contain only alphabetic characters and spaces");
-    return false;
-  }
-  return true;
+// Fonction pour initialiser le premier onglet
+function initializeFirstTab() {
+    console.log('Initialisation du premier onglet...');
+    
+    // S'assurer que le premier onglet est actif
+    const firstTab = document.querySelector('#profileTabs .nav-link');
+    const firstTabContent = document.querySelector('#overview');
+    
+    if (firstTab && firstTabContent) {
+        // Activer le premier onglet
+        firstTab.classList.add('active');
+        
+        // Afficher le premier contenu
+        firstTabContent.style.display = 'block';
+        firstTabContent.classList.add('show', 'active');
+        
+        console.log('Premier onglet initialisé:', firstTabContent.id);
+    }
+    
+    // Cacher tous les autres contenus
+    const otherTabs = document.querySelectorAll('#profile, #subscription, #transactions, #activity');
+    otherTabs.forEach(tab => {
+        tab.style.display = 'none';
+        tab.classList.remove('show', 'active');
+    });
 }
-  
-function validateEmail() {
-  var email = document.getElementById('email').value;
-  var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  if (!emailRegex.test(email)) {
-    toastr.error("Invalid email format");
-    return false;
-  }
-  return true;
-}
 
-function validatePhoneNumber() {
-  var phone = document.getElementById('phone').value;
-  var phoneRegex = /^\d{10}$/;
-  if (!phoneRegex.test(phone)) {
-    toastr.error("Phone number must be exactly 10 digits");
-    return false;
-  }
-  return true;
-}
-
-function validatePassword() {
-	var password = document.getElementById("password").value;
-	var uppercase = /[A-Z]/;
-	var lowercase = /[a-z]/;
-	var specialChars = /[!@#$%^&*()_+=-{};:'<>,./?]/;
-
-	if(password != ''){
-
-	    if (password.length < 8 || !uppercase.test(password) || !lowercase.test(password) || !specialChars.test(password)) {
-	    	toastr.error("Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one special character.");
-	      return false;
-	    }
-	}
-
-	return true;
+// Fonction de fallback pour les onglets
+function initCustomTabs() {
+    const tabs = document.querySelectorAll('[data-bs-toggle="tab"]');
+    const tabContents = document.querySelectorAll('.tab-pane');
+    
+    console.log('Initialisation des onglets personnalisés');
+    console.log('Onglets trouvés:', tabs.length);
+    console.log('Contenus trouvés:', tabContents.length);
+    
+    // S'assurer que tous les contenus sont initialement cachés
+    tabContents.forEach((content, index) => {
+        if (index === 0) {
+            content.style.display = 'block';
+            content.classList.add('show', 'active');
+            console.log('Premier onglet activé:', content.id);
+        } else {
+            content.style.display = 'none';
+            content.classList.remove('show', 'active');
+        }
+    });
+    
+    // Ajouter les événements de clic
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Clic sur onglet:', this.getAttribute('data-bs-target'));
+            
+            // Retirer la classe active de tous les onglets
+            tabs.forEach(t => t.classList.remove('active'));
+            tabContents.forEach(tc => {
+                tc.classList.remove('show', 'active');
+                tc.style.display = 'none';
+            });
+            
+            // Ajouter la classe active à l'onglet cliqué
+            this.classList.add('active');
+            const target = document.querySelector(this.getAttribute('data-bs-target'));
+            if (target) {
+                target.style.display = 'block';
+                target.classList.add('show', 'active');
+                console.log('Onglet activé:', target.id);
+            } else {
+                console.error('Cible non trouvée:', this.getAttribute('data-bs-target'));
+            }
+        });
+    });
 }
 
 function togglePassword() {
-        var passwordInput = document.getElementById("password");
-        var eyeIcon = document.getElementById("eye-icon");
-        
-        if (passwordInput.type === "password") {
-            passwordInput.type = "text";
-            eyeIcon.className = "fa fa-eye";
-        } else {
-            passwordInput.type = "password";
-            eyeIcon.className = "fa fa-eye-slash";
-        }
+    var passwordInput = document.getElementById("password");
+    var eyeIcon = document.getElementById("eye-icon");
+    
+    if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        eyeIcon.className = "fa fa-eye";
+    } else {
+        passwordInput.type = "password";
+        eyeIcon.className = "fa fa-eye-slash";
     }
+}
+
+function validateAlphabeticName() {
+    var name = document.getElementById('name').value;
+    var nameRegex = /^[a-zA-Z\s]+$/;
+    if (!nameRegex.test(name)) {
+        toastr.error("Le nom doit contenir uniquement des caractères alphabétiques et des espaces");
+        return false;
+    }
+    return true;
+}
+
+function validateEmail() {
+    var email = document.getElementById('email').value;
+    var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(email)) {
+        toastr.error("Format d'email invalide");
+        return false;
+    }
+    return true;
+}
+
+function validatePhoneNumber() {
+    var phone = document.getElementById('phone').value;
+    var phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(phone)) {
+        toastr.error("Le numéro de téléphone doit contenir exactement 10 chiffres");
+        return false;
+    }
+    return true;
+}
+
+function validatePassword() {
+    var password = document.getElementById('password').value;
+    if (password && password.length < 6) {
+        toastr.error("Le mot de passe doit contenir au moins 6 caractères");
+        return false;
+    }
+    return true;
+}
+
+// Handle avatar upload
+document.getElementById('avatar-upload').addEventListener('change', function(e) {
+    if (e.target.files && e.target.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const avatarImage = document.querySelector('.avatar-image');
+            avatarImage.innerHTML = `<img src="${e.target.result}" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+        };
+        reader.readAsDataURL(e.target.files[0]);
+    }
+});
+
+// Add loading state to form submission
+document.getElementById('user-profile').addEventListener('submit', function() {
+    const submitBtn = this.querySelector('.submit-btn');
+    submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Mise à jour...';
+    submitBtn.disabled = true;
+});
+
+// Fonction de test pour vérifier le contenu des onglets
+function testTabContent() {
+    console.log('=== TEST DU CONTENU DES ONGLETS ===');
+    
+    const tabs = document.querySelectorAll('[data-bs-toggle="tab"]');
+    const tabContents = document.querySelectorAll('.tab-pane');
+    
+    console.log('Onglets trouvés:', tabs.length);
+    tabs.forEach((tab, index) => {
+        console.log(`Onglet ${index + 1}:`, tab.textContent.trim(), '->', tab.getAttribute('data-bs-target'));
+    });
+    
+    console.log('Contenus trouvés:', tabContents.length);
+    tabContents.forEach((content, index) => {
+        console.log(`Contenu ${index + 1}:`, content.id, 'Display:', content.style.display, 'Classes:', content.className);
+        console.log('HTML:', content.innerHTML.substring(0, 100) + '...');
+    });
+}
+
+// Appeler le test après 2 secondes
+setTimeout(testTabContent, 2000);
+
+    // Ne forcer l'affichage du premier onglet que si Bootstrap n'est pas présent
+window.addEventListener('load', function() {
+    if (typeof bootstrap === 'undefined') {
+        console.log('Page chargée sans Bootstrap, vérification des onglets...');
+        
+        // Forcer l'affichage du premier onglet
+        const overviewTab = document.querySelector('#overview');
+        if (overviewTab) {
+            overviewTab.style.display = 'block';
+            overviewTab.classList.add('show', 'active');
+            console.log('Onglet overview forcé à l\'affichage');
+        }
+        
+        // Cacher tous les autres onglets
+        const otherTabs = document.querySelectorAll('#profile, #subscription, #transactions, #activity');
+        otherTabs.forEach(tab => {
+            tab.style.display = 'none';
+            tab.classList.remove('show', 'active');
+        });
+    }
+});
 </script>
 @endsection

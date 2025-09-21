@@ -145,19 +145,34 @@ class Helpers {
         try {
             $fileName = time() . rand() .'.'.$file->extension();
             $image = Image::make($file);
+            
+            // Save original with watermark if enabled
+            if (self::shouldApplyWatermark('original')) {
+                $image = self::applyWatermarkToImage($image, 'original');
+            }
             $image->save(public_path('uploads/'.$folderName.'/original/'.$fileName));
-            $image->resize(768, 428) // Resize the image to 768x428 pixels
-                ->encode($file->extension(), 75) // Compress the image to 75% quality JPEG
-                ->save(public_path('uploads/'.$folderName.'/768x428/'.$fileName));
-            $imagesmall = Image::make($file);
-            $imagesmall->resize(327, 250) // Resize the image to 327x250 pixels
-                ->encode($file->extension(), 75) // Compress the image to 75% quality JPEG
-                ->save(public_path('uploads/'.$folderName.'/327x250/'.$fileName));            
-            $imageextrasmall = Image::make($file);
-            $imageextrasmall->resize(80, 80) // Resize the image to 800x600 pixels
-                    ->encode($file->extension(), 75) // Compress the image to 75% quality JPEG
-                    ->save(public_path('uploads/'.$folderName.'/80x80/'.$fileName));
-            // $file->move(public_path('uploads/'.$folderName), $fileName);
+            
+            // Resize and save 768x428 with watermark if enabled
+            $image768 = Image::make($file)->resize(768, 428);
+            if (self::shouldApplyWatermark('768x428')) {
+                $image768 = self::applyWatermarkToImage($image768, '768x428');
+            }
+            $image768->encode($file->extension(), 75)->save(public_path('uploads/'.$folderName.'/768x428/'.$fileName));
+            
+            // Resize and save 327x250 with watermark if enabled
+            $image327 = Image::make($file)->resize(327, 250);
+            if (self::shouldApplyWatermark('327x250')) {
+                $image327 = self::applyWatermarkToImage($image327, '327x250');
+            }
+            $image327->encode($file->extension(), 75)->save(public_path('uploads/'.$folderName.'/327x250/'.$fileName));
+            
+            // Resize and save 80x80 with watermark if enabled
+            $image80 = Image::make($file)->resize(80, 80);
+            if (self::shouldApplyWatermark('80x45')) {
+                $image80 = self::applyWatermarkToImage($image80, '80x45');
+            }
+            $image80->encode($file->extension(), 75)->save(public_path('uploads/'.$folderName.'/80x80/'.$fileName));
+            
             return ['status' => true, 'message' => config('constant.common.messages.success_image'),'file_name'=>$fileName];
         }
         catch (\Exception $e) {
@@ -209,15 +224,27 @@ class Helpers {
                 }                
             }else{
                 $image = Image::make($file)->encode('webp', 75);
+                if (self::shouldApplyWatermark('original')) {
+                    $image = self::applyWatermarkToImage($image, 'original');
+                }
                 $image->save(public_path('uploads/'.$folderName.'/original/'.$imageName));
 
                 $croppedImage = Image::make($file)->fit(768, 428)->encode('webp', 75);
+                if (self::shouldApplyWatermark('768x428')) {
+                    $croppedImage = self::applyWatermarkToImage($croppedImage, '768x428');
+                }
                 $croppedImage->save(public_path('uploads/'.$folderName.'/768x428/'.$imageName));
 
                 $imagesmall = Image::make($file)->fit(327, 250)->encode('webp', 75);
+                if (self::shouldApplyWatermark('327x250')) {
+                    $imagesmall = self::applyWatermarkToImage($imagesmall, '327x250');
+                }
                 $imagesmall->save(public_path('uploads/'.$folderName.'/327x250/'.$imageName));   
 
                 $imageextrasmall = Image::make($file)->fit(80, 45)->encode('webp', 75);
+                if (self::shouldApplyWatermark('80x45')) {
+                    $imageextrasmall = self::applyWatermarkToImage($imageextrasmall, '80x45');
+                }
                 $imageextrasmall->save(public_path('uploads/'.$folderName.'/80x45/'.$imageName));
             }            
             return ['status' => true, 'message' => config('constant.common.messages.success_image'),'file_name'=>$imageName];
@@ -929,9 +956,9 @@ class Helpers {
 
     public static function getCategoryForSite($limit){
         if($limit==0){
-            $categories = Category::where('parent_id',0)->where('status',1)->where('is_featured',1)->get();
+            $categories = Category::where('parent_id',0)->where('status',1)->get();
         }else{
-            $categories = Category::where('parent_id',0)->where('status',1)->where('is_featured',1)->limit($limit)->get();
+            $categories = Category::where('parent_id',0)->where('status',1)->limit($limit)->get();
         }        
         if(count($categories)){
             foreach($categories as $category){
@@ -1173,6 +1200,152 @@ class Helpers {
         }
 
         return $shortenedTitle;
+    }
+    
+    /**
+     * Watermark Functions
+     */
+    public static function shouldApplyWatermark($size)
+    {
+        try {
+            $watermarkSettings = \App\Models\WatermarkSetting::getSettings();
+            return $watermarkSettings->is_enabled && $watermarkSettings->shouldApplyToSize($size);
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    public static function applyWatermarkToImage($image, $size)
+    {
+        try {
+            $watermarkSettings = \App\Models\WatermarkSetting::getSettings();
+            
+            if (!$watermarkSettings->is_enabled) {
+                return $image;
+            }
+
+            if ($watermarkSettings->type === 'text') {
+                return self::applyTextWatermark($image, $watermarkSettings, $size);
+            } else {
+                return self::applyImageWatermark($image, $watermarkSettings, $size);
+            }
+        } catch (\Exception $e) {
+            return $image;
+        }
+    }
+
+    private static function applyTextWatermark($image, $watermarkSettings, $size)
+    {
+        $width = $image->width();
+        $height = $image->height();
+        
+        // Calculate font size based on image size
+        $fontSize = max(12, min($width, $height) * ($watermarkSettings->size / 100));
+        
+        // Calculate position - for text, we use font size as width and height
+        $position = self::calculateWatermarkPosition($width, $height, $watermarkSettings->position, $fontSize * strlen($watermarkSettings->text) * 0.6, $fontSize);
+        
+        // Apply text watermark
+        $image->text($watermarkSettings->text, $position['x'], $position['y'], function($font) use ($watermarkSettings, $fontSize) {
+            $font->size($fontSize);
+            $font->color($watermarkSettings->color);
+            $font->opacity($watermarkSettings->opacity / 100);
+        });
+        
+        return $image;
+    }
+
+    private static function applyImageWatermark($image, $watermarkSettings, $size)
+    {
+        if (!$watermarkSettings->image_path) {
+            return $image;
+        }
+        
+        $watermarkPath = public_path('uploads/watermark/' . $watermarkSettings->image_path);
+        if (!file_exists($watermarkPath)) {
+            return $image;
+        }
+        
+        $watermark = Image::make($watermarkPath);
+        
+        // Resize watermark based on settings
+        $maxSize = min($image->width(), $image->height()) * ($watermarkSettings->size / 100);
+        $watermark->resize($maxSize, null, function ($constraint) {
+            $constraint->aspectRatio();
+            $constraint->upsize();
+        });
+        
+        // Calculate position
+        $position = self::calculateWatermarkPosition($image->width(), $image->height(), $watermarkSettings->position, $watermark->width(), $watermark->height());
+        
+        // Apply image watermark
+        $image->insert($watermark, 'top-left', $position['x'], $position['y']);
+        
+        return $image;
+    }
+
+    private static function calculateWatermarkPosition($imageWidth, $imageHeight, $position, $watermarkWidth, $watermarkHeight)
+    {
+        $padding = 10;
+        
+        switch ($position) {
+            case 'top-left':
+                return ['x' => $padding, 'y' => $padding];
+            case 'top-right':
+                return ['x' => $imageWidth - $watermarkWidth - $padding, 'y' => $padding];
+            case 'bottom-left':
+                return ['x' => $padding, 'y' => $imageHeight - $watermarkHeight - $padding];
+            case 'bottom-right':
+                return ['x' => $imageWidth - $watermarkWidth - $padding, 'y' => $imageHeight - $watermarkHeight - $padding];
+            case 'center':
+                return [
+                    'x' => ($imageWidth - $watermarkWidth) / 2,
+                    'y' => ($imageHeight - $watermarkHeight) / 2
+                ];
+            default:
+                return ['x' => $padding, 'y' => $padding];
+        }
+    }
+
+    /**
+     * Récupérer un paramètre de paiement
+     */
+    public static function getPaymentSetting($key, $default = null)
+    {
+        $setting = \App\Models\Setting::where('key', $key)->first();
+        return $setting ? $setting->value : $default;
+    }
+
+    /**
+     * Vérifier si Stripe est activé
+     */
+    public static function isStripeEnabled()
+    {
+        return self::getPaymentSetting('stripe_enabled', '0') === '1';
+    }
+
+    /**
+     * Vérifier si PayPal est activé
+     */
+    public static function isPayPalEnabled()
+    {
+        return self::getPaymentSetting('paypal_enabled', '0') === '1';
+    }
+
+    /**
+     * Récupérer la devise de paiement
+     */
+    public static function getPaymentCurrency()
+    {
+        return self::getPaymentSetting('payment_currency', 'USD');
+    }
+
+    /**
+     * Vérifier si le mode test est activé
+     */
+    public static function isPaymentTestMode()
+    {
+        return self::getPaymentSetting('payment_test_mode', '1') === '1';
     }
     
 }

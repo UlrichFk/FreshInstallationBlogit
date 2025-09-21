@@ -1,35 +1,166 @@
 @extends('site/layout/site-app')
 
 @section('content')
-<div class="main-container">	
-	<main class="site-main">
-		<div class="container-fluid no-left-padding no-right-padding contact-section">		
-		</div>
-		<div class="container-fluid no-left-padding no-right-padding">
-			<div class="container">
-				<div class="contact-info">
-					<div class="block-title">
-						<h3>{{__('lang.website_forget_title')}}</h3>
-					</div>
-				</div>
-				<div class="contact-form">
-					<form class="row" id="user-forget-password" onsubmit="return validateForgetPassword('user-forget-password');" action="{{url('/do-forget-password')}}" method="POST">
-						@csrf
-						<div class="col-md-12 form-group" style="text-align: -webkit-center;">
-							<div class="col-md-4 form-group">
-								<input type="email" class="form-control" placeholder="{{__('lang.website_email_placeholder')}}" name="email" id="email" required>
-							</div>
-							<div class="col-md-4 form-group" style="text-align:left;">
-								<a href="{{url('/login')}}">{{__('lang.website_login_title')}}</a>
-							</div>
-							<div class="col-md-4 form-group">
-								<button type="submit" class="submit">{{__('lang.website_forget_button')}}</button>
-							</div>
-						</div>
-					</form>
-				</div>
-			</div>
-		</div>
-	</main>		
+<style>
+.forget-password-container {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0;
+    background: linear-gradient(135deg, rgba(15, 52, 96, 0.1) 0%, rgba(83, 52, 131, 0.1) 100%);
+}
+
+.forget-password-card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius-lg);
+    padding: 3rem;
+    box-shadow: var(--shadow-medium);
+    border: 1px solid var(--border-color);
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+}
+
+.forget-password-header {
+    margin-bottom: 2rem;
+}
+
+.forget-password-header h3 {
+    color: var(--text-primary);
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.forget-password-header p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.forget-password-form {
+    text-align: left;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-control {
+    background: var(--secondary-color);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: var(--transition);
+    width: 100%;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(15, 52, 96, 0.1);
+    background: var(--secondary-color);
+}
+
+.form-control::placeholder {
+    color: var(--text-muted);
+}
+
+.submit-btn {
+    background: var(--gradient-accent);
+    color: var(--text-primary);
+    border: none;
+    border-radius: 30px;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
+
+.back-to-login {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.back-to-login a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.back-to-login a:hover {
+    color: var(--text-primary);
+    transform: translateX(-3px);
+}
+
+.back-to-login a::before {
+    content: '←';
+    font-size: 1.1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .forget-password-container {
+        padding: 1rem;
+    }
+
+    .forget-password-card {
+        padding: 2rem;
+        margin: 1rem;
+    }
+
+    .forget-password-header h3 {
+        font-size: 1.75rem;
+    }
+}
+</style>
+
+<div class="forget-password-container">
+    <div class="forget-password-card">
+        <div class="forget-password-header">
+            <h3>{{__('lang.website_forget_title')}}</h3>
+            <p>{{__('messages.forget_password_info')}}</p>
+        </div>
+        
+        <form class="forget-password-form" id="user-forget-password" onsubmit="return validateForget{{ __('lang.site_password') }}('user-forget-password');" action="{{url('/do-forget-password')}}" method="POST">
+            @csrf
+            <div class="form-group">
+                <input type="email" 
+                       class="form-control" 
+                       placeholder="{{__('lang.website_email_placeholder')}}" 
+                       name="email" 
+                       id="email" 
+                       required>
+            </div>
+            
+            <button type="submit" class="submit-btn">
+                {{__('lang.website_forget_button')}}
+            </button>
+        </form>
+        
+        <div class="back-to-login">
+            <a href="{{url('/login')}}">{{__('lang.website_login_title')}}</a>
+        </div>
+    </div>
 </div>
 @endsection

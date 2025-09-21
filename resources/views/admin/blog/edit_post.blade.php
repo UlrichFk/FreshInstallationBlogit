@@ -107,6 +107,18 @@
                             {{__('lang.admin_voting_pool_question')}}
                             </button>
                         </li>
+                        <li class="nav-item">
+                            <button
+                            type="button"
+                            class="nav-link"
+                            data-bs-toggle="tab"
+                            data-bs-target="#form-tabs-premium"
+                            role="tab"
+                            aria-selected="false"
+                            >
+                            {{ __("lang.admin_premium_content") }}
+                            </button>
+                        </li>
                         </ul>
                     </div>
 
@@ -290,6 +302,30 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="tab-pane fade" id="form-tabs-premium" role="tabpanel">
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <div class="form-check form-check-primary mt-3">
+                                        <input class="form-check-input" type="checkbox" name="is_premium" id="is_premium" @if($row->is_premium) checked @endif>
+                                        <label class="form-check-label" for="is_premium">{{ __("lang.admin_premium_content") }}</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="form-label" for="premium_content">{{ __("lang.admin_premium_content") }} ({{ __("lang.admin_additional_content") }})</label>
+                                    <textarea class="form-control" name="premium_content" id="premium_editor" placeholder="{{ __("lang.admin_premium_content_placeholder") }}" rows="6">{{ $row->premium_content }}</textarea>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="required_plan_id">{{ __("lang.admin_required_membership_plan") }}</label>
+                                    <select class="form-select" name="required_plan_id" id="required_plan_id">
+                                        <option value="">{{ __("lang.admin_no_specific_plan_required") }}</option>
+                                        <?php $plans = \Illuminate\Support\Facades\Schema::hasColumn('membership_plans','status') ? \App\Models\MembershipPlan::active()->get() : \App\Models\MembershipPlan::ordered()->get(); ?>
+                                        @foreach($plans as $plan)
+                                            <option value="{{ $plan->id }}" @if($row->required_plan_id == $plan->id) selected @endif>{{ $plan->name }} - {{ $plan->formatted_price }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                     </div>                
                 </div>
             </div>
@@ -305,7 +341,7 @@
                     type="button"
                     class="btn-close"
                     data-bs-dismiss="modal"
-                    aria-label="Close"
+                    aria-label="{{ __("lang.admin_close") }}"
                 ></button> -->
             </div>
             <div class="modal-body">
@@ -313,7 +349,7 @@
                     <form action="{{url('/admin/store-image')}}" method="post" class="dropzone needsclick" id="dropzone-multi">
                         @csrf
                         <div class="dz-message needsclick">
-                            Drop files here or click to upload
+                            {{ __("lang.admin_drop_files_upload") }}
                         </div>
                         <div class="fallback">
                             <input name="file" type="file" />
@@ -323,7 +359,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal" onclick="showImages();">
-                    Close
+                    {{ __("lang.admin_close") }}
                 </button>
             </div>
         </div>
@@ -358,6 +394,17 @@
         editor.ui.view.editable.element.style.height = '200px';
     })
     .catch(error => {
+        console.log(error);
+    });
+
+    // Initialize premium content editor
+    ClassicEditor
+    .create(document.querySelector('#premium_editor'), {
+        minHeight: '200px'
+    })
+    .then(editor => {
+        premiumEditorInstance = editor;
+    }).catch(error => {
         console.log(error);
     });
 </script>

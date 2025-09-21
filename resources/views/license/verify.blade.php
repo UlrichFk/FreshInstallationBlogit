@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" class="light-style layout-navbar-fixed layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="{{asset('/admin-assets/')}}" data-template="vertical-menu-template">
     <head>
@@ -101,36 +100,36 @@
                         @if(env('CODE_VERIFIED')==true)
                         <!-- <h3 class="mb-1 fw-bold">{{__('lang.admin_login')}}</h3>
                         <p class="mb-4">{{__('lang.admin_login_sub_text')}}</p> -->
-                            <h4 class="mb-1 pt-2">Thank You</h4>
-                            <p>Purchased code verified successfully</p>
-                            <p class="mb-4">Use this credentials to login admin panel</p>
+                            <h4 class="mb-1 pt-2">{{__('messages.thank_you')}}</h4>
+                            <p>{{__('messages.code_verified_success')}}</p>
+                            <p class="mb-4">{{__('messages.use_credentials')}}</p>
                             <p class="">
-                                Username : <span id="username">admin@gmail.com</span>
+                                {{__('messages.username')}} : <span id="username">admin@gmail.com</span>
                                 <i class="menu-icon tf-icons ti ti-copy copy-button" data-clipboard-target="#username" style="cursor: pointer;"></i>
                             </p>
                             <p class="">
-                                Password : <span id="password">admin</span>
+                                {{__('messages.password')}} : <span id="password">admin</span>
                                 <i class="menu-icon tf-icons ti ti-copy copy-button" data-clipboard-target="#password" style="cursor: pointer;"></i>
                             </p>
-                            <a class="btn btn-primary d-grid w-100" href="{{url('/admin-login')}}">Go to admin panel</a>
+                            <a class="btn btn-primary d-grid w-100" href="{{url('/admin-login')}}">{{__('messages.go_to_admin_panel')}}</a>
                         @else
-                            <h4 class="mb-1 pt-2">Verify Purchase Code</h4>
-                            <small>Please enter purchase code receive from codecanyon license</small>
+                            <h4 class="mb-1 pt-2">{{__('messages.verify_purchase_code')}}</h4>
+                            <small>{{__('messages.enter_purchase_code')}}</small>
                             <p class="mb-4"></p>
                             <form id="formAuthentication" class="mb-3"  action="{{ route('license.verify') }}" method="POST" method="POST">
                                 @csrf
                                 <div class="mb-3">
-                                    <label for="purchase_code" class="form-label">Purchase Code</label>
+                                    <label for="purchase_code" class="form-label">{{__('messages.purchase_code')}}</label>
                                     <input
                                         type="text"
                                         id="purchase_code" 
                                         name="purchase_code"
                                         class="form-control @error('purchase_code') is-invalid @enderror" value="{{ old('purchase_code') }}" required autocomplete="purchase_code" autofocus
-                                        placeholder="Enter purchase code"
+                                        placeholder="{{__('messages.enter_purchase_code_placeholder')}}"
                                     />
                                  <input type="hidden" name="base_url" value="{{ url('/') }}">
                                 </div>
-                                <button class="btn btn-primary d-grid w-100" type="submit">Verify</button>
+                                <button class="btn btn-primary d-grid w-100" type="submit">{{__('messages.verify')}}</button>
                             </form>
                         @endif
                         

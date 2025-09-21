@@ -34,7 +34,7 @@
                                 </div>
                                 <div class="col-md-6 show-category_1 hide">
                                     <label class="form-label" for="formtabs-first-name"> {{__('lang.admin_category')}} <span class="required">*</span></label>
-                                    <select id="category_id" class="select2 form-select category_id" placeholder="Select Category" name="category_id[]" multiple onchange="showSubCategory('category_id','subCategory');">
+                                    <select id="category_id" class="select2 form-select category_id" placeholder="{{ __("lang.admin_select_category") }}" name="category_id[]" multiple onchange="showSubCategory('category_id','subCategory');">
                                         <option value="">{{__('lang.admin_select_category')}}</option>
                                         @php
                                         $category_id = explode(',', $row->category_id);

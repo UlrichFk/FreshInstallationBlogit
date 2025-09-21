@@ -69,7 +69,7 @@
                                     @foreach($views as $view) 
                                         <tr>
                                             <td>
-                                            @if(isset($view->user) && $view->user!=''){{$view->user->name}}@else Guest @endif 
+                                            @if(isset($view->user) && $view->user!=''){{$view->user->name}}@else {{ __("lang.admin_guest") }} @endif 
                                             </td>
                                             <td>
                                                 {{date("d-m-Y",strtotime($view->created_at))}}</br>
@@ -105,7 +105,7 @@
                                     @foreach($overAllViews as $view) 
                                         <tr>
                                             <td>
-                                            @if(isset($view->user) && $view->user!=''){{$view->user->name}}@else Guest @endif 
+                                            @if(isset($view->user) && $view->user!=''){{$view->user->name}}@else {{ __("lang.admin_guest") }} @endif 
                                             @php $viewCount = \Helpers::getParticularUserViewCount($view->user_id,$view->ad_id); @endphp ({{$viewCount}})
                                             </td>
                                             <td>
@@ -142,7 +142,7 @@
                                     @foreach($clicks as $click) 
                                         <tr>
                                             <td>
-                                            @if(isset($click->user) && $click->user!=''){{$click->user->name}}@else Guest @endif
+                                            @if(isset($click->user) && $click->user!=''){{$click->user->name}}@else {{ __("lang.admin_guest") }} @endif
                                             </td>
                                             <td>
                                                 {{date("d-m-Y",strtotime($click->created_at))}}</br>

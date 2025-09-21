@@ -1,0 +1,1176 @@
+<?php $social_footer = \Helpers::getSocialMedias(0);?>
+
+<footer class="footer-main">
+    <div class="container">
+        <!-- Main Footer Content -->
+        <div class="footer-content">
+            <div class="footer-grid">
+                <!-- KONTAKT Section -->
+                <div class="footer-section contact-section">
+                    <h4 class="section-title">{{__('messages.contact')}}</h4>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <div class="company-name">{{__('messages.company_name')}}</div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-label">{{__('messages.org_number')}}: <span class="contact-value">930 504 645</span></div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-label">{{__('messages.address')}}: <span class="contact-value">Vardevegen Nord 7, 4700 Vennesla, Norge</span></div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-label">{{__('messages.phone')}}: <span class="contact-value">+47 911 42 848</span></div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-label">{{__('messages.email')}}: <span class="contact-value">friverdenmedia@outlook.fr</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NYTTIGE LENKER Section -->
+                <div class="footer-section links-section">
+                    <h4 class="section-title">{{__('messages.useful_links')}}</h4>
+                    <div class="links-grid">
+                        <div class="links-column">
+                            @php 
+                                $categories_footer = \Helpers::getCategoryForSite(6);
+                                // Trier par nombre d'articles (décroissant) et prendre les 3 premiers
+                                $top_categories = $categories_footer->sortByDesc('blog_count')->take(3);
+                                
+                                // Récupérer les pages CMS pour PERSONVERN et VILKÅR
+                                $cms_pages = \Helpers::getCmsForSite();
+                                $privacy_page = $cms_pages->where('page_title', 'privacy-policy')->first();
+                                $terms_page = $cms_pages->where('page_title', 'terms')->first();
+                            @endphp
+                            
+                            @if($privacy_page)
+                                <a href="{{url('/'.$privacy_page->page_title)}}" class="footer-link">{{$privacy_page->title}}</a>
+                            @else
+                                <a href="{{url('privacy-policy')}}" class="footer-link">{{__('messages.privacy')}}</a>
+                            @endif
+                            
+                            <ul class="footer-links">
+                                @if(isset($top_categories) && count($top_categories))
+                                    @foreach($top_categories as $category)
+                                        <li>
+                                            <a href="{{url('category/'.$category->slug)}}">
+                                                {{$category->name}}
+                                                @if(isset($category->blog_count))
+                                                    <span class="count">({{__('messages.articles_count', ['count' => $category->blog_count])}})</span>
+                                                @endif
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                @endif
+                            </ul>
+                        </div>
+                        <div class="links-column">
+                            <!--<a href="{{url('membership/plans')}}" class="footer-link">MEDLEMSKAP</a>-->
+                            @if($terms_page)
+                                <a href="{{url('/'.$terms_page->page_title)}}" class="footer-link">{{$terms_page->title}}</a>
+                            @else
+                                <a href="{{url('terms')}}" class="footer-link">{{__('messages.terms')}}</a>
+                            @endif
+                            <ul class="footer-links">
+                                @php 
+                                    // Trier par nombre d'articles (croissant) et prendre les 2 premiers
+                                    $bottom_categories = $categories_footer->sortBy('blog_count')->take(3);
+                                @endphp
+                                @if(isset($bottom_categories) && count($bottom_categories))
+                                    @foreach($bottom_categories as $category)
+                                        <li>
+                                            <a href="{{url('category/'.$category->slug)}}">
+                                                {{$category->name}}
+                                                @if(isset($category->blog_count))
+                                                    <span class="count">({{$category->blog_count}})</span>
+                                                @endif
+                                            </a>
+                                        </li>
+                                    @endforeach
+                                @endif
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ABONNER NÅ Section -->
+                <div class="footer-section subscribe-section">
+                    <h4 class="section-title">{{__('messages.subscribe_now')}}</h4>
+                    <div class="subscribe-content">
+                        <p class="subscribe-description">
+                            {{__('messages.subscribe_description')}}
+                        </p>
+                        <form class="subscribe-form" action="{{url('newsletter/subscribe')}}" method="POST">
+                            @csrf
+                            <div class="input-group">
+                                <input type="email" name="email" placeholder="{{__('messages.enter_email')}}" class="subscribe-input" required>
+                            </div>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="terms" required class="subscribe-checkbox">
+                                    <span class="checkmark"></span>
+                                    {{__('messages.accept_terms')}}
+                                </label>
+                            </div>
+                            <button type="submit" class="subscribe-btn">
+                                {{__('messages.subscribe')}}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Footer Bottom -->
+        <div class="footer-bottom">
+            <div class="footer-bottom-content">
+                <div class="copyright">
+                    <p class="powered-by"><i class="fas fa-copyright"></i>
+                        {{date('Y')}} {{setting('site_name')}}. {{setting('powered_by')}}</p>
+                </div>
+                <!-- Social Media -->
+                @if(isset($social_footer) && count($social_footer))
+                    <div class="footer-social">
+                        <div class="social-links">
+                            @foreach($social_footer as $social_footer_data)
+                                <a href="{{$social_footer_data->url}}" target="_blank" title="{{$social_footer_data->name}}" class="social-link" rel="noopener noreferrer">
+                                    <div class="social-icon1">
+                                        <i class="fab {{$social_footer_data->icon}}"></i>
+                                    </div>
+                                </a>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+                <div class="footer-actions">
+                    <div class="language-selector">
+                        <div class="language-toggle" onclick="toggleLanguageDropdown()">
+                            <i class="fas fa-globe"></i>
+                            <span class="current-language">
+                                @php
+                                    // Utiliser les traductions pour les noms de langues
+                                    $availableLanguages = [
+                                        'en' => __('languages.en'),
+                                        'fr' => __('languages.fr'),
+                                        'no' => __('languages.no')
+                                    ];
+                                    $currentLocale = app()->getLocale();
+                                    $currentLanguageName = $availableLanguages[$currentLocale] ?? __('languages.en');
+                                @endphp
+                                {{ $currentLanguageName }}
+                            </span>
+                            <i class="fas fa-chevron-down dropdown-arrow"></i>
+                        </div>
+                        <div class="language-dropdown" id="languageDropdown">
+                            @foreach($availableLanguages as $code => $name)
+                                <div class="language-option {{ $code === $currentLocale ? 'active' : '' }}" 
+                                     onclick="changeLanguage('{{ $code }}')">
+                                    <div class="language-flag">
+                                        @switch($code)
+                                            @case('en')
+                                                <i class="fas fa-flag-usa"></i>
+                                                @break
+                                            @case('fr')
+                                                <i class="fas fa-flag"></i>
+                                                @break
+                                            @case('no')
+                                                <i class="fas fa-flag"></i>
+                                                @break
+                                            @default
+                                                <i class="fas fa-flag"></i>
+                                        @endswitch
+                                    </div>
+                                    <span class="language-name">{{ $name }}</span>
+                                    @if($code === $currentLocale)
+                                        <i class="fas fa-check active-indicator"></i>
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<style>
+/* ==============================================
+   MODERN FOOTER STYLES
+   ============================================== */
+
+.footer-main {
+    background: var(--gradient-primary);
+    border-top: 1px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.footer-main::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="footerGrain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.03)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.03)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.03)"/><circle cx="10" cy="60" r="0.5" fill="rgba(255,255,255,0.03)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,255,255,0.03)"/></pattern></defs><rect width="100" height="100" fill="url(%23footerGrain)"/></svg>');
+    opacity: 0.5;
+}
+
+.footer-content {
+    position: relative;
+    z-index: 2;
+    padding: var(--space-10) 0 var(--space-8);
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--space-12);
+    margin-bottom: var(--space-12);
+}
+
+.section-title {
+    color: var(--text-primary);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: var(--space-8);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    position: relative;
+    padding-bottom: var(--space-3);
+    border-bottom: 2px solid var(--accent-color);
+    display: inline-block;
+}
+
+/* Contact Section */
+.contact-section {
+    padding-right: var(--space-6);
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.contact-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+}
+
+.company-name {
+    color: var(--text-primary);
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: var(--space-2);
+}
+
+.contact-label {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.contact-value {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* Links Section */
+.links-section {
+    padding: 0 var(--space-4);
+}
+
+.links-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+}
+
+.links-column {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+}
+
+.footer-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: var(--transition-fast);
+    padding: var(--space-1) 0;
+    border-bottom: 1px solid transparent;
+}
+
+.footer-link:hover {
+    color: var(--text-primary);
+    border-bottom-color: var(--accent-color);
+    transform: translateX(3px);
+}
+
+/* Footer Links List Styles */
+.footer-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.footer-links li {
+    margin-bottom: var(--space-2);
+}
+
+.footer-links a {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: var(--transition-fast);
+    padding: var(--space-1) 0;
+    border-bottom: 1px solid transparent;
+}
+
+.footer-links a:hover {
+    color: var(--text-primary);
+    border-bottom-color: var(--accent-color);
+    transform: translateX(3px);
+}
+
+.footer-links i {
+    color: var(--accent-color);
+    font-size: 0.8rem;
+    opacity: 0.8;
+    transition: var(--transition-fast);
+}
+
+.footer-links a:hover i {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.footer-links .count {
+    margin-left: auto;
+    background: var(--accent-color);
+    color: white;
+    padding: 0.1rem 0.4rem;
+    border-radius: var(--radius-full);
+    font-size: 0.7rem;
+    font-weight: 600;
+    opacity: 0.8;
+    transition: var(--transition-fast);
+}
+
+.footer-links a:hover .count {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* Subscribe Section */
+.subscribe-section {
+    padding-left: var(--space-6);
+}
+
+.subscribe-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.subscribe-description {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: var(--space-4);
+}
+
+.subscribe-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.subscribe-input {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    transition: var(--transition-fast);
+    outline: none;
+}
+
+.subscribe-input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.subscribe-input::placeholder {
+    color: var(--text-muted);
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.4;
+    cursor: pointer;
+    position: relative;
+}
+
+.subscribe-checkbox {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    height: 16px;
+    width: 16px;
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+    margin-top: 2px;
+    position: relative;
+    transition: var(--transition-fast);
+}
+
+.subscribe-checkbox:checked ~ .checkmark {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.subscribe-checkbox:checked ~ .checkmark:after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 1px;
+    width: 4px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.subscribe-btn {
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    padding: var(--space-3) var(--space-6);
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.subscribe-btn:hover {
+    background: var(--accent-secondary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.premium-link-footer {
+    background: linear-gradient(135deg, rgba(243, 156, 18, 0.1), rgba(230, 126, 34, 0.1)) !important;
+    border-left: 3px solid #f39c12 !important;
+    color: #f39c12 !important;
+}
+
+.donate-link-footer {
+    background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(192, 57, 43, 0.1)) !important;
+    border-left: 3px solid var(--danger-color) !important;
+    color: var(--danger-color) !important;
+}
+
+
+
+/* Footer Bottom */
+.footer-bottom {
+    border-top: 1px solid var(--border-color);
+    padding: var(--space-6) 0;
+    /* background: rgba(22, 33, 62, 0.5); */
+    position: relative;
+    z-index: 2;
+}
+
+.footer-bottom-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+}
+
+.footer-social {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer-social .social-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    flex-wrap: nowrap;
+}
+
+.footer-social .social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: var(--transition-fast);
+    font-size: 0.85rem;
+    font-weight: 500;
+    min-width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+}
+
+.footer-social .social-link:hover {
+    background: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.footer-social .social-link i {
+    font-size: 1rem;
+    transition: var(--transition-fast);
+}
+
+.footer-social .social-link:hover i {
+    transform: scale(1.1);
+}
+
+.copyright p {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.powered-by {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    margin-top: var(--space-1);
+}
+
+.footer-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+}
+
+.language-selector {
+    position: relative;
+    display: flex;
+    align-items: center;
+    color: var(--text-secondary);
+}
+
+.language-toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    cursor: pointer;
+    transition: var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+    min-width: 140px;
+}
+
+.language-toggle::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.1), transparent);
+    transition: var(--transition-normal);
+}
+
+.language-toggle:hover::before {
+    left: 100%;
+}
+
+.language-toggle:hover {
+    border-color: var(--accent-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.language-toggle i:first-child {
+    color: var(--accent-color);
+    font-size: 1.1rem;
+    transition: var(--transition-fast);
+}
+
+.language-toggle:hover i:first-child {
+    transform: scale(1.1);
+}
+
+.current-language {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    transition: var(--transition-fast);
+}
+
+.dropdown-arrow {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    transition: var(--transition-fast);
+}
+
+.language-toggle:hover .dropdown-arrow {
+    color: var(--accent-color);
+    transform: rotate(180deg);
+}
+
+.language-dropdown {
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    min-width: 180px;
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px) scale(0.95);
+    transition: var(--transition-normal);
+    z-index: 1000;
+    margin-bottom: var(--space-2);
+    overflow: hidden;
+}
+
+.language-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+.language-dropdown::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient-accent);
+}
+
+.language-option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    position: relative;
+    overflow: hidden;
+}
+
+.language-option::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.1), transparent);
+    transition: var(--transition-normal);
+}
+
+.language-option:hover::before {
+    left: 100%;
+}
+
+.language-option:hover {
+    background: var(--card-bg-light);
+    transform: translateX(-5px);
+}
+
+.language-option.active {
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(44, 128, 182, 0.1));
+    border-right: 3px solid var(--accent-color);
+}
+
+.language-flag {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-md);
+    background: rgba(52, 152, 219, 0.1);
+    transition: var(--transition-fast);
+}
+
+.language-option:hover .language-flag {
+    background: var(--accent-color);
+    transform: scale(1.1) rotate(5deg);
+}
+
+.language-flag i {
+    color: var(--accent-color);
+    font-size: 0.9rem;
+    transition: var(--transition-fast);
+}
+
+.language-option:hover .language-flag i {
+    color: white;
+}
+
+.language-name {
+    flex: 1;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: var(--transition-fast);
+}
+
+.language-option:hover .language-name {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.active-indicator {
+    color: var(--accent-color);
+    font-size: 0.8rem;
+    opacity: 0.8;
+    transition: var(--transition-fast);
+}
+
+.language-option:hover .active-indicator {
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+
+
+/* ==============================================
+   RESPONSIVE DESIGN
+   ============================================== */
+
+@media (max-width: 1024px) {
+    .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-8);
+    }
+    
+    .subscribe-section {
+        grid-column: span 2;
+        padding-left: 0;
+        padding-top: var(--space-6);
+    }
+}
+
+@media (max-width: 768px) {
+    .footer-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-8);
+    }
+    
+    .contact-section {
+        padding-right: 0;
+        text-align: center;
+    }
+    
+    .links-section {
+        padding: 0;
+        text-align: center;
+    }
+
+    .links-column {
+        align-items: center;
+    }
+    
+    .links-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-4);
+    }
+    
+    .subscribe-section {
+        grid-column: span 1;
+        padding-left: 0;
+        text-align: center;
+    }
+    
+    .footer-bottom-content {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--space-6);
+    }
+    
+    .footer-social {
+        order: 2;
+        margin: var(--space-4) 0;
+        width: 100%;
+    }
+    
+    .footer-social .social-links {
+        flex-wrap: nowrap;
+        justify-content: center;
+        gap: var(--space-3);
+        width: 100%;
+    }
+    
+    .footer-social .social-link {
+        padding: var(--space-2);
+        font-size: 0.8rem;
+        min-width: 40px;
+        height: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-content {
+        padding: var(--space-12) 0 var(--space-8);
+    }
+    
+    .newsletter-container {
+        padding: var(--space-4);
+    }
+    
+    .newsletter-info h3 {
+        font-size: 1.5rem;
+    }
+    
+    .footer-actions {
+        flex-direction: column;
+        gap: var(--space-4);
+    }
+    
+    .language-toggle {
+        min-width: 120px;
+        padding: var(--space-2) var(--space-3);
+    }
+    
+    .current-language {
+        font-size: 0.8rem;
+    }
+    
+    .language-dropdown {
+        min-width: 160px;
+        right: -20px;
+        bottom: 100%;
+    }
+    
+    .language-option {
+        padding: var(--space-2) var(--space-3);
+    }
+    
+    .language-flag {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .language-name {
+        font-size: 0.85rem;
+    }
+    
+    /* Footer Social Media Section - Unified Styles */
+    .footer-social {
+        margin-top: var(--space-8);
+        padding-top: var(--space-8);
+        border-top: 1px solid var(--border-color);
+        width: 100%;
+    }
+    
+    .footer-social .social-links {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: center;
+        align-items: center;
+        gap: var(--space-3);
+        width: 100%;
+    }
+    
+    .footer-social .social-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-2);
+        padding: var(--space-3);
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        color: var(--text-secondary);
+        text-decoration: none;
+        transition: var(--transition-fast);
+        min-width: 50px;
+        height: 50px;
+        flex-shrink: 0;
+    }
+    
+    .footer-social .social-link:hover {
+        background: var(--accent-color);
+        border-color: var(--accent-color);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+    
+    .footer-social .social-icon1 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition-fast);
+    }
+    
+    .footer-social .social-link i {
+        font-size: 1.1rem;
+        transition: var(--transition-fast);
+    }
+    
+    .footer-social .social-link:hover i {
+        transform: scale(1.1);
+    }
+        
+        .social-name {
+            font-size: 0.75rem;
+        }
+    }
+}
+
+/* ==============================================
+   FORCED HORIZONTAL SOCIAL MEDIA LAYOUT
+   ============================================== */
+
+/* Force horizontal layout for social media icons */
+.footer-social .social-links {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: var(--space-3) !important;
+}
+
+.footer-social .social-link {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    min-width: 44px !important;
+    height: 44px !important;
+}
+
+/* Ensure consistent spacing and alignment */
+.footer-social .social-icon1 {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    height: auto !important;
+}
+
+/* Override any conflicting styles */
+.footer-social .social-link,
+.footer-social .social-links {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+}
+
+/* Mobile-specific horizontal layout */
+@media (max-width: 768px) {
+    .footer-social .social-links {
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        justify-content: center !important;
+        gap: var(--space-2) !important;
+    }
+    
+    .footer-social .social-link {
+        min-width: 40px !important;
+        height: 40px !important;
+        padding: var(--space-2) !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-social .social-links {
+        gap: var(--space-2) !important;
+    }
+    
+    .footer-social .social-link {
+        min-width: 36px !important;
+        height: 36px !important;
+        padding: var(--space-1) !important;
+    }
+}
+</style>
+
+<script>
+
+
+// Subscribe form handling
+document.addEventListener('DOMContentLoaded', function() {
+    const subscribeForm = document.querySelector('.subscribe-form');
+    if (subscribeForm) {
+        subscribeForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = this.querySelector('input[name="email"]').value;
+            const terms = this.querySelector('input[name="terms"]').checked;
+            const button = this.querySelector('.subscribe-btn');
+            const originalText = button.textContent;
+            
+            if (!terms) {
+                if (typeof toastr !== 'undefined') {
+                    toastr.error('Veuillez accepter les conditions d\'utilisation');
+                }
+                return;
+            }
+            
+            // Show loading state
+            button.textContent = 'Abonner...';
+            button.disabled = true;
+            
+            // Simulate API call (replace with actual implementation)
+            setTimeout(() => {
+                // Reset button
+                button.textContent = 'Abonnert!';
+                button.style.background = 'var(--success-color)';
+                
+                // Show success message
+                if (typeof toastr !== 'undefined') {
+                    toastr.success('Takk for din abonnement!');
+                }
+                
+                // Reset form
+                this.reset();
+                
+                // Reset button after delay
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '';
+                    button.disabled = false;
+                }, 3000);
+            }, 1500);
+        });
+    }
+});
+
+// Language selector functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        const languageSelector = document.querySelector('.language-selector');
+        const languageDropdown = document.getElementById('languageDropdown');
+        
+        if (languageSelector && !languageSelector.contains(e.target)) {
+            languageDropdown.classList.remove('show');
+        }
+    });
+});
+
+// Toggle language dropdown
+function toggleLanguageDropdown() {
+    const dropdown = document.getElementById('languageDropdown');
+    if (dropdown) {
+        dropdown.classList.toggle('show');
+        
+        // Add animation to dropdown arrow
+        const arrow = document.querySelector('.dropdown-arrow');
+        if (arrow) {
+            if (dropdown.classList.contains('show')) {
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+    }
+}
+
+// Function to change language with enhanced UX
+function changeLanguage(languageCode) {
+    // Show loading state
+    const languageToggle = document.querySelector('.language-toggle');
+    const currentLanguage = document.querySelector('.current-language');
+    
+    if (languageToggle && currentLanguage) {
+        // Add loading animation
+        languageToggle.style.pointerEvents = 'none';
+        languageToggle.style.opacity = '0.7';
+        
+        // Update current language display immediately for better UX
+        const languageNames = {
+            'en': '{{ __("languages.en") }}',
+            'fr': '{{ __("languages.fr") }}',
+            'no': '{{ __("languages.no") }}'
+        };
+        
+        currentLanguage.textContent = languageNames[languageCode] || 'English';
+        
+        // Close dropdown
+        const dropdown = document.getElementById('languageDropdown');
+        if (dropdown) {
+            dropdown.classList.remove('show');
+        }
+        
+        // Reset arrow
+        const arrow = document.querySelector('.dropdown-arrow');
+        if (arrow) {
+            arrow.style.transform = 'rotate(0deg)';
+        }
+        
+        // Create and submit form
+        const form = document.createElement('form');
+        form.method = 'GET';
+        form.action = '{{ url("setlang") }}';
+        
+        const languageInput = document.createElement('input');
+        languageInput.type = 'hidden';
+        languageInput.name = 'lang';
+        languageInput.value = languageCode;
+        form.appendChild(languageInput);
+        
+        // Submit the form
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>

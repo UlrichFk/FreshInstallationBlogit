@@ -91,11 +91,11 @@
                                                   <label class="form-check-label" for="Status"> All Status Change</label>
                                                 </div>
                                                 <div class="col-md-3">
-                                                  <input class="form-check-input permission-all-checkbox_Delete" type="checkbox" value="Delete" data-permission="Delete" onclick="selectAllSameData('permission-all-checkbox_Delete','permission-checkbox_Delete');"/>
+                                                  <input class="form-check-input permission-all-checkbox_Delete" type="checkbox" value="{{ __("lang.admin_delete") }}" data-permission="Delete" onclick="selectAllSameData('permission-all-checkbox_Delete','permission-checkbox_Delete');"/>
                                                   <label class="form-check-label" for="Delete"> All Delete</label>
                                                 </div>
                                                 <div class="col-md-3">
-                                                  <input class="form-check-input permission-all-checkbox_Sortable" type="checkbox" value="Delete" data-permission="Delete" onclick="selectAllSameData('permission-all-checkbox_Sortable','permission-checkbox_Sortable');"/>
+                                                  <input class="form-check-input permission-all-checkbox_Sortable" type="checkbox" value="{{ __("lang.admin_delete") }}" data-permission="Delete" onclick="selectAllSameData('permission-all-checkbox_Sortable','permission-checkbox_Sortable');"/>
                                                   <label class="form-check-label" for="Delete"> All Sortable</label>
                                                 </div>
                                                 <div class="col-md-3">

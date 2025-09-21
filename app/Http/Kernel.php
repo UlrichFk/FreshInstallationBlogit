@@ -38,6 +38,7 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \App\Http\Middleware\CheckSiteLanguage::class,
         ],
 
         'api' => [
@@ -45,15 +46,6 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
-    ];
-
-    protected $routeMiddleware = [
-        // other middleware...
-        'check.app.installation' => \App\Http\Middleware\CheckInstallation::class,
-        'check.app.code_verified' => \App\Http\Middleware\CheckCodeVerified::class,
-        'permission' => \App\Http\Middleware\CheckPermissions::class,
-        'admin-language' => \App\Http\Middleware\CheckAdminLanguage::class,
-        'maintenance' => \App\Http\Middleware\MaintenanceModeCheck::class,
     ];
 
     /**
@@ -75,5 +67,13 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'check.app.installation' => \App\Http\Middleware\CheckInstallation::class,
+        'check.app.code_verified' => \App\Http\Middleware\CheckCodeVerified::class,
+        'permission' => \App\Http\Middleware\CheckPermissions::class,
+        'admin-language' => \App\Http\Middleware\CheckAdminLanguage::class,
+        'maintenance' => \App\Http\Middleware\MaintenanceModeCheck::class,
+        'check.subscription' => \App\Http\Middleware\CheckSubscription::class,
+        'check.subadmin.status' => \App\Http\Middleware\CheckSubadminStatus::class,
+        'site-language' => \App\Http\Middleware\CheckSiteLanguage::class,
     ];
 }
